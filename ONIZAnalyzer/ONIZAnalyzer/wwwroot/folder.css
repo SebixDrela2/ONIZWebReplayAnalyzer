@@ -1,0 +1,116 @@
+﻿.folder {
+    margin-bottom: 8px;
+    border: 1px solid rgba(0, 255, 127, 0.2);
+    border-radius: 6px;
+    overflow: visible;
+    background: rgba(10, 20, 15, 0.7);
+}
+
+.folder:hover {
+    box-shadow: inset 0 0 10px rgba(0, 255, 127, 0.1);
+    background: rgba(0, 255, 127, 0.15);
+}
+
+.folder-header {
+    padding: 10px 12px 10px 35px; 
+    cursor: pointer;
+    background: rgba(0, 255, 127, 0.05);
+    font-weight: 600;
+    font-size: 13px;
+    color: #00ff7f;
+    transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+}
+
+.folder-header::before {
+    content: '📁'; 
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    filter: hue-rotate(90deg) saturate(2); 
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.folder.open .folder-header::before {
+    opacity: 1;
+    filter: hue-rotate(90deg) saturate(3) drop-shadow(0 0 2px rgba(0, 255, 127, 0.5));
+}
+
+.folder-header::after {
+    content: '›';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: rgba(0, 255, 127, 0.7);
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.folder.open .folder-header::after {
+    transform: translateY(-50%) rotate(90deg);
+    color: #00ff7f;
+}
+
+.folder.open {
+    background: rgba(0, 255, 127, 0.2);
+    box-shadow: inset 0 0 15px rgba(0, 255, 127, 0.15);
+}
+
+.folder-content {
+    display: none;
+    padding-left: 15px;
+    background: rgba(5, 15, 10, 0.8);
+    overflow: visible;
+}
+
+.folder.open .folder-content {
+    display: block;
+    padding: 8px 15px;
+    border-top: 1px solid rgba(0, 255, 127, 0.1);
+    max-height: none;
+}
+
+.folder .folder {
+    margin-left: 10px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    background: rgba(8, 18, 13, 0.7);
+}
+
+.folder .folder .folder {
+    background: rgba(6, 16, 11, 0.7);
+}
+
+.folder, .folder * {
+    pointer-events: auto;
+}
+
+.folder.open .folder-content * {
+    pointer-events: auto;
+}
+
+.folder-content {
+    will-change: max-height;
+}
+
+.folder .custom-list-item {
+    margin-left: 0;
+    margin-bottom: 4px;
+    border-radius: 3px;
+    background: rgba(10, 20, 15, 0.9);
+}
+
+.folder .custom-list-item:hover {
+    background: rgba(0, 255, 127, 0.1);
+    transform: translateX(2px);
+}
+
+.folder .custom-list-item.selected {
+    background: linear-gradient(135deg, rgba(0, 255, 127, 0.2) 0%, rgba(0, 204, 102, 0.2) 100%);
+}

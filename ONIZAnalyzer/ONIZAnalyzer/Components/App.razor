@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ONIZ Analyzer</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["main.css"]" />
+    <link rel="stylesheet" href="@Assets["searchbar.css"]" />
+    <link rel="stylesheet" href="@Assets["replaylist.css"]" />
+    <link rel="stylesheet" href="@Assets["folder.css"]" />
+    <link rel="stylesheet" href="@Assets["analyze.css"]" />
+    <link rel="stylesheet" href="@Assets["ONIZAnalyzer.styles.css"]" />
+    <ImportMap />
+    <HeadOutlet @rendermode="InteractiveAuto" />
+</head>
+
+<body>
+    <Routes @rendermode="new InteractiveWebAssemblyRenderMode(prerender: true)" />
+    <ReconnectModal />
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>

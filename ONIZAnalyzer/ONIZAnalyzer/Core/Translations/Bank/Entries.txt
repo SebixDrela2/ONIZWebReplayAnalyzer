@@ -1,0 +1,17 @@
+SecurityForcesKilled = Security Forces Killed
+
+GamesPlayedAsHuman = Games Played Marine
+
+GamesPlayedAsZombie = Games Played Zombie
+
+ZombieWins = Zombie Wins
+
+NumberOfTimesCaptured = Number Of Captures
+
+ZombiesKilled = Total Zombies Killed
+
+HumansCaptured = Marines Captured
+
+FuelDiverted = Fuel Diverted
+
+VespeneHarvested = Vespene Harvested

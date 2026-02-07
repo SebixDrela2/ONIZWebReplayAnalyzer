@@ -1,0 +1,23 @@
+AdvancedInfestationSecurity = Advanced Infestation Security
+AdvancedInfestationContainment = Advanced Infestation Containment
+AdvancedInfestationGateControl = Advanced Infestation GateControl
+
+StrainSpeed = T1 Speed
+PureStrainSpeed = T2 Speed
+HunterlingStrain = T3 Speed
+StrainHealth = T1 Armor
+PureStrainHealth = T2 Armor
+TankStrain = T3 Armor
+StrainDamage = T1 Damage
+PureStrainDamage = T2 Damage
+DefilerStrain = T3 Damage
+StrainVolatile = T1 Volatile
+PureStrainVolatile = T2 Volatile
+KaboomerStrain = T3 Volatile
+CreepSpeed = Creep Speed
+RegenerativeCreep = Regenerative Creep
+ConstructiveCreep = Constructive Creep
+VirulentCreep = Virulent Creep
+UnlockDropPods = Unlock DropPods
+EvolveDropPods = Evolve DropPods
+SweepingInfestation = Pod Ult

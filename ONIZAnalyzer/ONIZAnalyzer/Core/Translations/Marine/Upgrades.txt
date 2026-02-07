@@ -1,0 +1,87 @@
+FlamethrowerUnlocked = Flamethrower
+SpecOpsFlamethrower = SpecOps Flamethrower
+CryoFreezeUnlocked = Cryo Freeze
+LongRangeIncineratorsUnlocked = Long Range Incinerators
+ThermiteFilamentsUnlocked=Thermite Filaments
+
+ShotgunUnlocked = Shotgun
+SpecOpsShotgun = SpecOps Shotgun
+HighPrecisionBeamsUnlocked = High Precision Beams
+ConcussiveShotUnlocked=Concussive Shot
+
+SpecOpsAssaultRifle = Spec Ops Assault Rifle
+AutoTargetingSystemUnlocked = Auto Targeting System
+TitaniumBulletCasingsUnlocked = Titanium Bullet Casings
+GrenadeLauncherUnlocked = Grenade Launcher
+
+HellfireRocketLauncherUnlocked = Hellfire Rocket Launcher
+SpecOpsHellfireRocketLauncher = SpecOps Hellfire Rocket Launcher
+RocketLauncherMod1Unlocked = Advanced Lock On System
+ShockwaveMissilesUnlocked = Shockwave Missiles
+RocketLauncherMod3Unlocked = Advanced Rocket Thrusters
+
+BeamRifleUnlocked = Plasma Rifle
+SpecOpsPlasmaRifle = SpecOps Plasma Rifle
+LongRangeScopeUnlocked = Long Range Scope
+CorrosivePlasmaUnlocked = Corrosive Plasma
+PlasmaRifleMod3Unlocked = Concussive Plasma
+
+ForceFieldGrenadeUnlocked = Force Field Grenade
+SpecOpsForcefieldGrenade = SpecOps Force Field Grenade
+
+FlashBangUnlocked = Flash Bang
+SpecOpsFlashbang = SpecOps Flash Bang
+
+FragGrenadeUnlocked = Frag Grenade
+SpecOpsFragGrenade = SpecOps Frag Grenade
+
+IncendiaryGrenadeUnlocked = Incendiary Grenade
+SpecOpsIncendiaryGrenade = SpecOps Incendiary Grenade
+
+ExplorationDroidUnlocked = Exploration Droid
+AdvancedExplorationDroid = Advanced Exploration Droid
+
+AdvancedDroidEngines = Advanced Droid Engines
+TurboDroidEngines = Turbo Droid Engines
+
+MiningChargeUnlocked = Mining Charge
+AdvancedMiningCharge = Advanced Mining Charge
+
+MotionSensorUnlocked = Motion Sensor
+
+DefensiveMatrixUnlocked = Defensive Matrix
+StimpackUnlocked = Stimpack
+OverloadWeaponUnlocked = Overload
+
+AutoTurretUnlocked = Auto Turret
+SpecOpsTurretUnlocked = SpecOps Turret
+FlameTurretUnlocked = Flame Turret
+HeavyTurretUnlocked = Heavy Turret
+
+BioMechanicalRepairDroneUnlocked = Healing Drone
+SpecOpsBioMechanicalRepairDroneUnlocked = Advanced Healing Drone
+RechargeDroneUnlocked = Recharge Drone
+CombatAccelerationDroneUnlocked = Acceleration Drone
+
+PsiDisrupterUnlocked = Psi
+SpecOpsPsiDisruptorUnlocked = SpecOps Psi
+PsiDepressorUnlocked = Slow Psi
+
+CombatShieldUnlocked = Combat Shield
+MedicShieldUnlocked = Medic Shield
+EnergyPackUnlocked = Energy Pack
+QuantumBackpackUnlocked = Backpack
+OpticalVisorUnlocked = Optical Visor
+AIAssistantUnlocked = A.I.Assistant
+
+HazmatSuitUnlocked = Hazmat Suit
+AdvancedHazmatSuitUnlocked = Advanced Hazmat Suit
+EnergySuitUnlocked = Energy Suit
+AdvancedEnergySuitUnlocked = Advanced Energy Suit
+CombatSuitUnlocked = Combat Suit
+AdvancedCombatSuitUnlocked = Advanced Combat Suit
+Shieldsiotunlocked = Shield Suit
+AdvancedShieldSuitUnlocked = Advanced Shield Suit
+
+AresUnlocked = Tank
+SpecOpsAresUnlocked = SpecOps Tank

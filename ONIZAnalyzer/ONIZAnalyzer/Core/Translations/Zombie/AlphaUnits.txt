@@ -1,0 +1,24 @@
+Abomination = Aberation
+InfestedAbomination = Abomination
+
+Lurker = Legion
+LegionnaireZombie = Legionnaire
+
+Anubalisk = Anubalisk
+Anubalight = Anubalight
+
+PrimalTownHallUprooted = Geneweaver
+GenesplicerUprooted = Genesplicer
+
+Hunter = Hunter
+Predator2 = Predator
+
+Underseer = Underseer
+Saboteur = Saboteur
+
+Overseer = Overseer
+
+RoyalCocoon = Queen Cocoon
+QueenCoop = Queen
+
+MassiveCocoon = Alpha Egg

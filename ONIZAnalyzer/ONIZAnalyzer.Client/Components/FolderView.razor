@@ -1,0 +1,64 @@
+﻿@* FolderView.razor *@
+@using ONIZAnalyzer.Common
+@using Microsoft.AspNetCore.Components
+
+<div class="folder @(Folder.IsOpen ? "open" : "")">
+    <div class="folder-header" @onclick="ToggleFolder">
+        @Folder.FolderName (@Folder.Replays.Count(r => r.IsVisible) replays@(Folder.SubFolders.Any() ? $", {Folder.SubFolders.Count} subfolders" : ""))
+    </div>
+
+    @if (Folder.IsOpen)
+    {
+        <div class="folder-content">
+            @if (Folder.SubFolders != null)
+            {
+                @foreach (var subFolder in Folder.SubFolders.Where(f => f.IsVisible))
+                {
+                    <FolderView Folder="subFolder"
+                                OnToggleFolder="OnToggleFolder"
+                                OnSelectReplay="OnSelectReplay"
+                                SearchTerm="@SearchTerm" />
+                }
+            }
+
+            @if (Folder.Replays != null)
+            {
+                @foreach (var replay in Folder.Replays
+                    .Where(r => r.IsVisible && r.FileName
+                    .Contains(SearchTerm, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    <div class="custom-list-item @(replay.IsSelected ? "selected" : "")"
+                         @onclick="() => SelectReplay(replay.FullPath)">
+                        <div class="custom-list-item-content" title="@replay.FullPath">
+                            @replay.FileName
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ReplayFolderUi Folder { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<ReplayFolderUi> OnToggleFolder { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSelectReplay { get; set; }
+
+    [Parameter]
+    public string SearchTerm { get; set; } = string.Empty;
+
+    private void ToggleFolder()
+    {
+        OnToggleFolder.InvokeAsync(Folder);
+    }
+
+    private void SelectReplay(string fullPath)
+    {
+        OnSelectReplay.InvokeAsync(fullPath);
+    }
+}

@@ -1,0 +1,39 @@
+InfestedCivilian = T0
+InfestedCivilianBurrowed = T0
+
+Zergling = T1_Speed
+ZerglingBurrowed = T1_Speed
+
+HotSRaptor = T2_Speed
+HotSRaptorBurrowed = T2_Speed
+
+Hunterling = T3_Speed
+HunterlingBurrowed = T3_Speed
+
+InfestorTerran = T1_Armor
+InfestorTerranBurrowed = T1_Armor
+
+DehakaMirrorImage = T2_Armor
+DehakaMirrorImageBurrowed = T2_Armor
+
+Dehaka = T3_Armor
+DehakaBurrowed = T3_Armor
+
+RoachVile = T1_Damage
+RoachVileBurrowed = T1_Damage
+
+RoachCorpser = T2_Damage
+RoachCorpserBurrowed = T2_Damage
+
+DefilerMP = T3_Damage
+DefilerMPBurrowed = T3_Damage
+
+InfestedExploder = T1_Volatile
+InfestedExploderBurrowed = T1_Volatile
+
+Baneling = T2_Volatile
+BanelingBurrowed = T2_Volatile
+
+Kaboomer = T3_Volatile
+KaboomerBurrowed = T3_Volatile
+

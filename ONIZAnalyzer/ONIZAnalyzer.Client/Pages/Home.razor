@@ -1,0 +1,103 @@
+﻿@page "/home"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject HttpClient Client
+@inject NavigationManager Navigation
+
+<div class="page-layout">
+    <div class="sidebar">
+        <div class="search-container">
+            <input type="text" class="search-input"
+                       placeholder="Search replays..."
+                       @bind="SearchTerm"
+                       @bind:event="oninput"/>
+
+            <span class="search-clear" 
+                  @onclick="ClearSearch" 
+                  style="@(string.IsNullOrEmpty(SearchTerm) ? "display:none;" : null)">
+                ✕
+            </span>
+        </div>
+
+        <div class="custom-list">
+            @if (Loading)
+            {
+                <div class="loading">Loading replays...</div>
+            }
+            else if (ErrorMessage != null)
+            {
+                <div class="error">@ErrorMessage</div>
+            }
+            else if (!Folders.Any())
+            {
+                <div class="no-replays">No replays found</div>
+            }
+            else
+            {
+                @foreach (var folder in Folders.Where(f => f.IsVisible))
+                {
+                    <FolderView Folder="folder" 
+                              OnToggleFolder="ToggleFolder"
+                              OnSelectReplay="SelectReplay" 
+                              SearchTerm="@SearchTerm" />
+                }
+            }
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="analyze-section">
+            <div class="button-row" style="display: flex; gap: 10px;">
+                <button class="analyze-button"
+                        @onclick="AnalyzeReplay"
+                        disabled="@(string.IsNullOrEmpty(SelectedReplayPath) || Analyzing)">
+                    @if (Analyzing)
+                    {
+                        <span>Analyzing...</span>
+                    }
+                    else
+                    {
+                        <span>Analyze</span>
+                    }
+                </button>
+
+                <button class="analyze-button"
+                        @onclick="MassAnalyzeTwoWayConnection"
+                        disabled="@(Analyzing)">
+                    @if (Analyzing)
+                    {
+                        <span>Mass Analyzing...</span>                        
+                    }
+                    else
+                    {
+                        <span>Mass Analyze</span>
+                    }
+                </button>
+            </div>
+
+            <div class="analysis-textbox-container">
+                <div id="analysisTextbox" class="analysis-textbox">
+                    @if (string.IsNullOrEmpty(AnalysisResult))
+                    {
+                        <div>Select a replay and click Analyze to see results...</div>
+                    }
+                    else if(Analyzing)
+                    {
+                        <div class="dot-animation">Analyzing @MassAnalyzedReplays/@TotalReplayCount</div>
+
+                        @if (AverageTimeLeftForMassAnalyze.Ticks is not 0)
+                        {
+                            <span>ETA: @(@$"{AverageTimeLeftForMassAnalyze:hh\:mm\:ss\.fff}")</span>
+                        }
+                    }
+                    else
+                    {
+                        @((MarkupString)AnalysisResult)
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

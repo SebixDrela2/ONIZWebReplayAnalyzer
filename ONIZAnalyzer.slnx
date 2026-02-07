@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ONIZAnalyzer.Common/ONIZAnalyzer.Common.csproj" />
+  <Project Path="ONIZAnalyzer/ONIZAnalyzer.Client/ONIZAnalyzer.Client.csproj" />
+  <Project Path="ONIZAnalyzer/ONIZAnalyzer/ONIZAnalyzer.csproj" />
+</Solution>

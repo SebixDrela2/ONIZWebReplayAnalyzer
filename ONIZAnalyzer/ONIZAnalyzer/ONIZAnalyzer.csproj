@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Core\Translations\Marine\MarineUnits.txt" />
+    <None Remove="Core\Translations\Marine\Upgrades.txt" />
+    <None Remove="Core\Translations\Zombie\AlphaUnits.txt" />
+    <None Remove="Core\Translations\Zombie\StrainUnits.txt" />
+    <None Remove="Core\Translations\Zombie\Upgrades.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Core\Translations\Bank\Entries.txt" />
+    <EmbeddedResource Include="Core\Translations\Marine\MarineUnits.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Translations\Marine\Upgrades.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Translations\Zombie\AlphaUnits.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Translations\Zombie\StrainUnits.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Core\Translations\Zombie\Upgrades.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\..\ONIZAnalyzer.Common\ONIZAnalyzer.Common.csproj" />
+    <ProjectReference Include="..\ONIZAnalyzer.Client\ONIZAnalyzer.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dependencies\" />
+  </ItemGroup>
+    
+  <ItemGroup>
+      <Reference Include="ICSharpCode.SharpZipLib">
+         <HintPath>Dependencies\ICSharpCode.SharpZipLib.dll</HintPath>
+      </Reference>
+      <Reference Include="MPQArchive">
+         <HintPath>Dependencies\MPQArchive.dll</HintPath>
+      </Reference>
+      <Reference Include="Sc2ReplayAnalyzer">
+         <HintPath>Dependencies\Sc2ReplayAnalyzer.dll</HintPath>
+      </Reference>
+  </ItemGroup>
+
+</Project>
