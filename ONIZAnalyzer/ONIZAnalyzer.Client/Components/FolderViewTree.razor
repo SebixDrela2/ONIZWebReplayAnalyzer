@@ -1,0 +1,48 @@
+﻿@using ONIZAnalyzer.Common
+
+<div class="custom-list">
+    @if (Folders is null)
+    {
+        <div class="loading">Loading replays...</div>
+    }
+    else if (ErrorMessage != null)
+    {
+        <div class="error">@ErrorMessage</div>
+    }
+    else if (Folders is [])
+    {
+        <div class="no-replays">@NoDataMessage</div>
+    }
+    else
+    {
+        @foreach (var folder in Folders.Where(f => f.IsVisible))
+        {
+            <FolderView Folder="folder"
+                        OnSelectReplay="@OnSelectReplay"
+                        SearchTerm="@SearchTerm" />
+        }
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public IReadOnlyList<ReplayFolderUi>? Folders { get; set; }
+
+    [Parameter]
+    public string? ErrorMessage { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string NoDataMessage { get; set; } = string.Empty;
+
+    [Parameter]
+    [EditorRequired]
+    public string LoadingMessage { get; set; } = string.Empty;
+
+    [Parameter]
+    public string SearchTerm { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnSelectReplay { get; set; }
+}

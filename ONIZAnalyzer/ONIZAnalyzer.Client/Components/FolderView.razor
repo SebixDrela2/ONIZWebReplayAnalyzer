@@ -4,7 +4,7 @@
 
 <div class="folder @(Folder.IsOpen ? "open" : "")">
     <div class="folder-header" @onclick="ToggleFolder">
-        @Folder.FolderName (@Folder.Replays.Count(r => r.IsVisible) replays@(Folder.SubFolders.Any() ? $", {Folder.SubFolders.Count} subfolders" : ""))
+        @Folder.FolderName (@Folder.Replays.Count(r => r.IsVisible) items@(Folder.SubFolders.Any() ? $", {Folder.SubFolders.Count} subfolders" : ""))
     </div>
 
     @if (Folder.IsOpen)
@@ -15,7 +15,6 @@
                 @foreach (var subFolder in Folder.SubFolders.Where(f => f.IsVisible))
                 {
                     <FolderView Folder="subFolder"
-                                OnToggleFolder="OnToggleFolder"
                                 OnSelectReplay="OnSelectReplay"
                                 SearchTerm="@SearchTerm" />
                 }
@@ -44,9 +43,6 @@
     public ReplayFolderUi Folder { get; set; } = default!;
 
     [Parameter]
-    public EventCallback<ReplayFolderUi> OnToggleFolder { get; set; }
-
-    [Parameter]
     public EventCallback<string> OnSelectReplay { get; set; }
 
     [Parameter]
@@ -54,7 +50,8 @@
 
     private void ToggleFolder()
     {
-        OnToggleFolder.InvokeAsync(Folder);
+        Folder.IsOpen = !Folder.IsOpen;
+        StateHasChanged();
     }
 
     private void SelectReplay(string fullPath)
