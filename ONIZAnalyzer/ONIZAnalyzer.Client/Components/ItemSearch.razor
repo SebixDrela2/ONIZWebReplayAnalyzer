@@ -1,10 +1,9 @@
-﻿@using ONIZAnalyzer.Common
-<div class="search-container">
-    <input type="text" class="search-input"
+﻿<div class="search-container">
+    <input type="text"
+           class="search-input"
            placeholder="Search..."
-           @bind="SearchTerm"
-           @onchange="Search"
-           @bind:event="oninput" />
+           value="@SearchTerm"
+           @oninput="HandleInput" />
 
     <span class="search-clear"
           @onclick="ClearSearch"
@@ -14,7 +13,11 @@
 </div>
 
 @code {
-    private string SearchTerm { get; set; } = string.Empty;
+    [Parameter]
+    public string? SearchTerm { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> SearchTermChanged { get; set; }
 
     [Parameter]
     public EventCallback OnSearch { get; set; }
@@ -22,8 +25,19 @@
     [Parameter]
     public EventCallback OnClear { get; set; }
 
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value?.ToString();
 
-    private async Task ClearSearch() => await OnClear.InvokeAsync();
+        await SearchTermChanged.InvokeAsync(SearchTerm);
+        await OnSearch.InvokeAsync();
+    }
 
-    private async Task Search() => await OnSearch.InvokeAsync();
+    private async Task ClearSearch()
+    {
+        SearchTerm = string.Empty;
+
+        await SearchTermChanged.InvokeAsync(SearchTerm);
+        await OnClear.InvokeAsync();
+    }
 }

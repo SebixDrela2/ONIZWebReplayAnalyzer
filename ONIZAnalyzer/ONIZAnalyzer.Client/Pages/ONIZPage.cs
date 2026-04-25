@@ -110,8 +110,12 @@ public abstract partial class ONIZPage : ComponentBase
             ApplySearchFilter(Folders, SearchTerm.ToLower());
         }
 
-        UpdateFolderList();
         StateHasChanged();
+    }
+
+    protected void UpdateSearch(string search)
+    {
+        SearchTerm = search;
     }
 
     protected void ClearSearch()
@@ -170,10 +174,5 @@ public abstract partial class ONIZPage : ComponentBase
         }
 
         return anyVisible;
-    }
-
-    private void UpdateFolderList()
-    {
-        Folders = Folders.Where(f => f.IsVisible).ToList();
     }
 }

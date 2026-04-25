@@ -9,7 +9,7 @@
     {
         <div class="error">@ErrorMessage</div>
     }
-    else if (Folders is [])
+    else if (Folders.Any(x => !x.IsVisible))
     {
         <div class="no-replays">@NoDataMessage</div>
     }

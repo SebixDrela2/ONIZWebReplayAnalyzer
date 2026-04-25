@@ -68,7 +68,10 @@
 </SectionContent>
 
 <SectionContent SectionId="CommonLayout.SearchSection">
-	<ItemSearch OnSearch="UpdateVisibility"
+	<ItemSearch
+		        SearchTerm="@SearchTerm"
+		        OnSearch="UpdateVisibility"
+				SearchTermChanged="UpdateSearch"
 				OnClear="ClearSearch">
 	</ItemSearch>
 </SectionContent>
