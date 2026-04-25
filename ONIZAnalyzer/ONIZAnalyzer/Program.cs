@@ -1,6 +1,7 @@
 using OhNoItsZombiesAnalyzer.Services;
 using ONIZAnalyzer.Common.WebSocket;
 using ONIZAnalyzer.Components;
+using ONIZAnalyzer.Services;
 using ONIZAnalyzer.WebSocket;
 
 namespace ONIZAnalyzer
@@ -17,6 +18,7 @@ namespace ONIZAnalyzer
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
             builder.Services.AddSingleton<ReplayService>();
+            builder.Services.AddSingleton<RecordsService>();
             builder.Services.AddHttpClient("WebAPI", (sp, client) =>
             {
                 var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();

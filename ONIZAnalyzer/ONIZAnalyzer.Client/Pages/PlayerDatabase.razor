@@ -1,12 +1,16 @@
 ﻿@page "/player-database"
 @using Microsoft.AspNetCore.Components.Sections
+@inject IJSRuntime JSRuntime
+@inject HttpClient Client
+@inject NavigationManager Navigation
 @layout CommonLayout
+@inherits ONIZPage
 
 <SectionContent SectionId="CommonLayout.SideBarSection">
-    <div>asd123</div>
+	<FolderViewTree Folders="Folders"
+					ErrorMessage="@ErrorMessage"
+					LoadingMessage="Loading database..."
+					NoDataMessage="No records found"
+					OnSelectedItem="SelectRecord"
+					SearchTerm="@SearchTerm" />
 </SectionContent>
-
-<div>asd</div>
-@code {
-
-}

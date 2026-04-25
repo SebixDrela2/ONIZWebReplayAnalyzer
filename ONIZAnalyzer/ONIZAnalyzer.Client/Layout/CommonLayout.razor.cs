@@ -24,7 +24,7 @@ public partial class CommonLayout
         UpdateFolderList();
     }
 
-    private void ResetVisibility(List<CustomFolder> folderList)
+    private void ResetVisibility(IReadOnlyList<CustomFolder> folderList)
     {
         foreach (var folder in folderList)
         {
@@ -42,7 +42,7 @@ public partial class CommonLayout
         }
     }
 
-    private bool ApplySearchFilter(List<CustomFolder> folderList, string searchTerm)
+    private bool ApplySearchFilter(IReadOnlyList<CustomFolder> folderList, string searchTerm)
     {
         bool anyVisible = false;
 

@@ -18,13 +18,13 @@ public class ReplayPathsRetriever
     public readonly string AccountsPath = Path.Combine(Environment
         .GetFolderPath(Environment.SpecialFolder.MyDocuments), StarcraftII, Accounts);
 
-    internal IReadOnlyList<ReplayFolderDto> GetOnizReplayFolders()
+    internal IReadOnlyList<FolderDto> GetOnizReplayFolders()
     {
         var handleFolders = Directory.GetDirectories(AccountsPath)
             .SelectMany(Directory.GetDirectories)
             .Where(dir => dir.Contains(HandleIdentifier));
 
-        var result = new List<ReplayFolderDto>();
+        var result = new List<FolderDto>();
 
         foreach (var handle in handleFolders)
         {
@@ -38,9 +38,9 @@ public class ReplayPathsRetriever
         return result;
     }
 
-    private ReplayFolderDto BuildFolderTree(string folderPath)
+    private FolderDto BuildFolderTree(string folderPath)
     {
-        var folderDto = new ReplayFolderDto
+        var folderDto = new FolderDto
         {
             FolderName = Path.GetFileName(folderPath),
             FullPath = folderPath,
@@ -48,7 +48,7 @@ public class ReplayPathsRetriever
                 .Where(IsOnizReplay)
                 .Select(path => new FileInfo(path))
                 .OrderByDescending(fi => fi.LastWriteTime)
-                .Select(fi => new ReplayFileDto
+                .Select(fi => new FileDto
                 {
                     FileName = fi.Name,
                     FullPath = fi.FullName
@@ -65,6 +65,7 @@ public class ReplayPathsRetriever
     private static bool IsOnizReplay(string replayPath)
     {
         var fileName = Path.GetFileName(replayPath);
+
         return fileName.StartsWith(ArcticPrefix) || fileName.StartsWith(SubTerreneanPrefix);
     }
 }

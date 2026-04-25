@@ -9,19 +9,13 @@ namespace ONIZAnalyzer.Client.Pages;
 
 public partial class Home
 {
-    public List<CustomFolder> Folders { get; set; } = [];
-    public List<CustomFolder> AllFolders { get; set; } = [];
-
-    public string? SelectedReplayPath;
-    public string SearchTerm { get; set; } = string.Empty;
     public string AnalysisResult { get; set; } = string.Empty;
-    public bool Loading { get; set; } = true;
     public bool Analyzing { get; set; } = false;
     public int MassAnalyzedReplays { get; set; } = 0;
-    public int TotalReplayCount => Folders.Count + Folders.Sum(x => x.TotalCount);
+
+    protected string? SelectedReplayPath;
 
     public TimeSpan AverageTimeLeftForMassAnalyze = default;
-    public string? ErrorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -29,7 +23,7 @@ public partial class Home
         {
             return;
         }
-        
+
         await LoadReplays();
     }
     
@@ -37,9 +31,7 @@ public partial class Home
     {
         try
         {
-            Loading = true;
-            ErrorMessage = null;
-            StateHasChanged();
+            ResetState();
 
             var response = await Client.GetAsync("/api/replay/list");
 
@@ -52,8 +44,7 @@ public partial class Home
 
             if (folderDtos != null)
             {
-                AllFolders = ConvertToUiModels(folderDtos);
-                Folders = AllFolders.ToList();
+                SetFoldersFromDto(folderDtos);
                 AutoExpandFoldersWithContent();
             }
         }
@@ -69,69 +60,11 @@ public partial class Home
         }
     }
 
-    private List<CustomFolder> ConvertToUiModels(List<CustomFolderDto> dtos)
-    {
-        var result = new List<CustomFolder>();
-
-        foreach (var dto in dtos)
-        {
-            var uiFolder = new CustomFolder
-            {
-                FolderName = dto.FolderName,
-                FullPath = dto.FullPath,
-                IsOpen = false
-            };
-
-            if (dto.Items is { })
-            {
-                uiFolder.Items = dto.Items.Select(r => new FileItem
-                {
-                    FileName = r.FileName,
-                    FullPath = r.FullPath,
-                    IsVisible = true
-                }).ToList();
-            }
-
-            if (dto.SubFolders is { Count: > 0 })
-            {
-                uiFolder.SubFolders = ConvertToUiModels(dto.SubFolders);
-            }
-
-            result.Add(uiFolder);
-        }
-
-        return result;
-    }
-
-    private void AutoExpandFoldersWithContent()
-    {
-        foreach (var folder in AllFolders)
-        {
-            SetAutoExpand(folder);
-        }
-    }
-
-    private void SetAutoExpand(CustomFolder folder)
-    {
-        var hasReplays = folder.Items?.Any() == true;
-        var hasSubfolders = folder.SubFolders?.Any() == true;
-
-        folder.IsOpen = hasReplays || hasSubfolders;
-
-        if (folder.SubFolders is { })
-        {
-            foreach (var subFolder in folder.SubFolders)
-            {
-                SetAutoExpand(subFolder);
-            }
-        }
-    }
-
     private void SelectReplay(string fullPath)
     {
-        DeselectAllReplays(AllFolders);
+        DeselectAllItems(Folders);
 
-        var replay = FindReplay(AllFolders, fullPath);
+        var replay = FindReplay(Folders, fullPath);
 
         if (replay is { })
         {
@@ -143,23 +76,7 @@ public partial class Home
         StateHasChanged();
     }
 
-    private void DeselectAllReplays(List<CustomFolder> folderList)
-    {
-        foreach (var folder in folderList)
-        {
-            foreach (var replay in folder.Items)
-            {
-                replay.IsSelected = false;
-            }
-
-            if (folder.SubFolders != null)
-            {
-                DeselectAllReplays(folder.SubFolders);
-            }
-        }
-    }
-
-    private FileItem? FindReplay(List<CustomFolder> folderList, string fullPath)
+    private FileItem? FindReplay(IReadOnlyList<CustomFolder> folderList, string fullPath)
     {
         foreach (var folder in folderList)
         {

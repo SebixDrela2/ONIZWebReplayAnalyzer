@@ -1,0 +1,101 @@
+﻿using Microsoft.AspNetCore.Components;
+using ONIZAnalyzer.Common;
+
+namespace ONIZAnalyzer.Client.Pages;
+
+public abstract class ONIZPage : ComponentBase
+{
+    public IReadOnlyList<CustomFolder> Folders { get; set; } = [];
+
+    protected int TotalItemsCount => Folders.Count + Folders.Sum(x => x.TotalCount);
+    protected string? ErrorMessage { get; set; }
+    protected bool Loading { get; set; } = true;
+    protected string SearchTerm { get; set; } = string.Empty;
+
+    protected void SetFoldersFromDto(IReadOnlyList<CustomFolderDto> dtos)
+    {
+        Folders = FoldersFromDto(dtos);
+    }
+
+    private IReadOnlyList<CustomFolder> FoldersFromDto(IReadOnlyList<CustomFolderDto> dtos)
+    {
+        var result = new List<CustomFolder>();
+
+        foreach (var dto in dtos)
+        {
+            var uiFolder = new CustomFolder
+            {
+                FolderName = dto.FolderName,
+                FullPath = dto.FullPath,
+                IsOpen = false
+            };
+
+            if (dto.Items is { })
+            {
+                uiFolder.Items = dto.Items.Select(r => new FileItem
+                {
+                    FileName = r.FileName,
+                    FullPath = r.FullPath,
+                    IsVisible = true
+                }).ToList();
+            }
+
+            if (dto.SubFolders is { Count: > 0 })
+            {
+                uiFolder.SubFolders = FoldersFromDto(dto.SubFolders);
+            }
+
+            result.Add(uiFolder);
+        }
+
+        return result;
+    }
+
+
+    protected void AutoExpandFoldersWithContent()
+    {
+        foreach (var folder in Folders)
+        {
+            SetAutoExpand(folder);
+        }
+    }
+
+    protected void SetAutoExpand(CustomFolder folder)
+    {
+        var hasItems = folder.Items?.Any() == true;
+        var hasSubfolders = folder.SubFolders?.Any() == true;
+
+        folder.IsOpen = hasItems || hasSubfolders;
+
+        if (folder.SubFolders is { })
+        {
+            foreach (var subFolder in folder.SubFolders)
+            {
+                SetAutoExpand(subFolder);
+            }
+        }
+    }
+
+    protected void DeselectAllItems(IReadOnlyList<CustomFolder> folderList)
+    {
+        foreach (var folder in folderList)
+        {
+            foreach (var replay in folder.Items)
+            {
+                replay.IsSelected = false;
+            }
+
+            if (folder.SubFolders != null)
+            {
+                DeselectAllItems(folder.SubFolders);
+            }
+        }
+    }
+
+    protected void ResetState()
+    {
+        Loading = true;
+        ErrorMessage = null;
+        StateHasChanged();
+    }
+}

@@ -17,7 +17,7 @@ public class ReplayService
     private readonly ReplayPathsRetriever _replayPathRetriever = new();
     private readonly ReplayDecoder _replayDecoder = new();
 
-    public IReadOnlyList<ReplayFolderDto> GetReplayPathTuples() => _replayPathRetriever.GetOnizReplayFolders();
+    public IReadOnlyList<FolderDto> GetReplayPathTuples() => _replayPathRetriever.GetOnizReplayFolders();
 
     public string GetReplayAnalyzeContent(string fullPath)
     {

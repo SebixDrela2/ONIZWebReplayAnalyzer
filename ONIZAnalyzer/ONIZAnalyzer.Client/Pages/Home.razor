@@ -6,6 +6,7 @@
 @inject HttpClient Client
 @inject NavigationManager Navigation
 @layout CommonLayout
+@inherits ONIZPage
 
 <div class="button-row" style="display: flex; gap: 10px;">
 	<button class="analyze-button"
@@ -43,7 +44,7 @@
 		}
 		else if (Analyzing)
 		{
-			<div class="dot-animation">Analyzing @MassAnalyzedReplays/@TotalReplayCount</div>
+			<div class="dot-animation">Analyzing @MassAnalyzedReplays/@TotalItemsCount</div>
 
 			@if (AverageTimeLeftForMassAnalyze.Ticks is not 0)
 			{

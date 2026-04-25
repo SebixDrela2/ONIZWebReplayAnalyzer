@@ -1,38 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OhNoItsZombiesAnalyzer.Services;
 
-namespace OhNoItsZombiesAnalyzer.Controllers
+namespace OhNoItsZombiesAnalyzer.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ReplayController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ReplayController : ControllerBase
+    private readonly ReplayService _replayService;
+
+    public ReplayController(ReplayService replayService)
     {
-        private readonly ReplayService _replayService;
+        _replayService = replayService;
+    }
 
-        public ReplayController(ReplayService replayService)
+    [HttpGet("list")]
+    public IActionResult GetReplayList()
+    {
+
+        var replays = _replayService.GetReplayPathTuples();
+
+        return Ok(replays);
+    }
+
+    [HttpGet("analyze")]
+    public IActionResult AnalyzeReplay([FromQuery] string path)
+    {
+        if (string.IsNullOrEmpty(path))
         {
-            _replayService = replayService;
+            return BadRequest("Path parameter is required");
         }
 
-        [HttpGet("list")]
-        public IActionResult GetReplayList()
-        {
-
-            var replays = _replayService.GetReplayPathTuples();
-
-            return Ok(replays);
-        }
-
-        [HttpGet("analyze")]
-        public IActionResult AnalyzeReplay([FromQuery] string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return BadRequest("Path parameter is required");
-            }
-
-            var content = _replayService.GetReplayAnalyzeContent(path);
-            return Ok(content);
-        }
+        var content = _replayService.GetReplayAnalyzeContent(path);
+        return Ok(content);
     }
 }
