@@ -34,8 +34,8 @@ public abstract class ONIZPage : ComponentBase
             {
                 uiFolder.Items = dto.Items.Select(r => new FileItem
                 {
-                    FileName = r.FileName,
-                    FullPath = r.FullPath,
+                    Name = r.Name,
+                    Path = r.Path,
                     IsVisible = true
                 }).ToList();
             }

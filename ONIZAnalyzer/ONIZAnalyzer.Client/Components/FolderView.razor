@@ -23,13 +23,13 @@
             @if (Folder.Items != null)
             {
                 @foreach (var replay in Folder.Items
-                    .Where(r => r.IsVisible && r.FileName
+                    .Where(r => r.IsVisible && r.Name
                     .Contains(SearchTerm, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     <div class="custom-list-item @(replay.IsSelected ? "selected" : "")"
-                         @onclick="() => SelectItem(replay.FullPath)">
-                        <div class="custom-list-item-content" title="@replay.FullPath">
-                            @replay.FileName
+                         @onclick="() => SelectItem(replay.Path)">
+                        <div class="custom-list-item-content" title="@replay.Path">
+                            @replay.Name
                         </div>
                     </div>
                 }

@@ -5,6 +5,8 @@ namespace ONIZAnalyzer.Client.Pages;
 
 public partial class PlayerDatabase
 {
+    private string SelectedHandle { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         if (RendererInfo.Name is "Static")
@@ -12,13 +14,24 @@ public partial class PlayerDatabase
             return;
         }
 
+        Console.WriteLine("elo");
         await LoadRecords();
     }
 
-    private void SelectRecord()
+    private void SelectRecord(string handle)
     {
+        DeselectAllItems(Folders);
 
+        var record = FindRecord(handle);
+
+        record.IsSelected = true;
+        SelectedHandle = handle;
     }
+
+    private FileItem FindRecord(string handle) => Folders
+        .First()
+        .Items
+        .Single((folder => folder.Path == handle));
 
     private async Task LoadRecords()
     {

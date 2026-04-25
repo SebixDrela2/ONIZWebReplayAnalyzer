@@ -30,8 +30,8 @@ public class RecordsService
             FullPath = HandleData,
             Items = [.. serializedNameHandleData.Select(handleData => new FileItemDto 
             {
-                FileName = $"{handleData.Handle} {handleData.Name}",
-                FullPath = string.Empty
+                Name = $"{handleData.Handle} {handleData.Name}",
+                Path = handleData.Handle
             })]
         };
     }
@@ -39,7 +39,7 @@ public class RecordsService
     private IReadOnlyList<NameHandle> GetSerializedNameHandleData()
     {
         var handleMapJson = File.ReadAllText(HandleMapFolderPath);
-        var handleMapData = JsonSerializer.Deserialize<IReadOnlyList<(string Name, string Handle)>>(handleMapJson)!;
+        var handleMapData = JsonSerializer.Deserialize<List<(string Name, string Handle)>>(handleMapJson, new JsonSerializerOptions { IncludeFields = true })!;
 
         return [..handleMapData.Select(handleMap => new NameHandle(handleMap.Name, handleMap.Handle))];
     }

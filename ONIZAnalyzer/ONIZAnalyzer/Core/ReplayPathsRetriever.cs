@@ -42,16 +42,16 @@ public class ReplayPathsRetriever
     {
         var folderDto = new FolderDto
         {
-            FolderName = Path.GetFileName(folderPath),
-            FullPath = folderPath,
-            Replays = [.. Directory.GetFiles(folderPath)
+            Name = Path.GetFileName(folderPath),
+            Path = folderPath,
+            Items = [.. Directory.GetFiles(folderPath)
                 .Where(IsOnizReplay)
                 .Select(path => new FileInfo(path))
                 .OrderByDescending(fi => fi.LastWriteTime)
                 .Select(fi => new FileDto
                 {
-                    FileName = fi.Name,
-                    FullPath = fi.FullName
+                    Name = fi.Name,
+                    Path = fi.FullName
                 })]
         };
 

@@ -52,7 +52,7 @@ public partial class CommonLayout
 
             foreach (var replay in folder.Items)
             {
-                replay.IsVisible = replay.FileName.ToLower().Contains(searchTerm);
+                replay.IsVisible = replay.Name.ToLower().Contains(searchTerm);
 
                 if (replay.IsVisible)
                 {

@@ -80,7 +80,7 @@ public partial class Home
     {
         foreach (var folder in folderList)
         {
-            var replay = folder.Items.FirstOrDefault(r => r.FullPath == fullPath);
+            var replay = folder.Items.FirstOrDefault(r => r.Path == fullPath);
 
             if (replay is { })
             {

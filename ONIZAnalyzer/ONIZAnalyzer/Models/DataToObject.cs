@@ -4,16 +4,16 @@ namespace OhNoItsZombiesAnalyzer.Models;
 
 public class FolderDto
 {
-    public string FolderName { get; set; } = "";
-    public string FullPath { get; set; } = "";
-    public List<FileDto> Replays { get; set; } = new();
+    public string Name { get; set; } = "";
+    public string Path { get; set; } = "";
+    public List<FileDto> Items { get; set; } = new();
     public List<FolderDto> SubFolders { get; set; } = new();
 }
 
 public class FileDto
 {
-    public string FileName { get; init; } = default!;
-    public string FullPath { get; init; } = default!;
+    public string Name { get; init; } = default!;
+    public string Path { get; init; } = default!;
 }
 
 public class FolderUi : FolderDto

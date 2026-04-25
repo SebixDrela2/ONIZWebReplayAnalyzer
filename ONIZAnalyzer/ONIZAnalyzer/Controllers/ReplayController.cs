@@ -17,7 +17,6 @@ public class ReplayController : ControllerBase
     [HttpGet("list")]
     public IActionResult GetReplayList()
     {
-
         var replays = _replayService.GetReplayPathTuples();
 
         return Ok(replays);
