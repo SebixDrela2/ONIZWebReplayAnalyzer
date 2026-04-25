@@ -4,7 +4,7 @@
 
 <div class="folder @(Folder.IsOpen ? "open" : "")">
     <div class="folder-header" @onclick="ToggleFolder">
-        @Folder.FolderName (@Folder.Replays.Count(r => r.IsVisible) items@(Folder.SubFolders.Any() ? $", {Folder.SubFolders.Count} subfolders" : ""))
+        @Folder.FolderName (@Folder.Items.Count(r => r.IsVisible) items@(Folder.SubFolders.Any() ? $", {Folder.SubFolders.Count} subfolders" : ""))
     </div>
 
     @if (Folder.IsOpen)
@@ -15,19 +15,19 @@
                 @foreach (var subFolder in Folder.SubFolders.Where(f => f.IsVisible))
                 {
                     <FolderView Folder="subFolder"
-                                OnSelectReplay="OnSelectReplay"
+                                OnSelectedItem="OnSelectedItem"
                                 SearchTerm="@SearchTerm" />
                 }
             }
 
-            @if (Folder.Replays != null)
+            @if (Folder.Items != null)
             {
-                @foreach (var replay in Folder.Replays
+                @foreach (var replay in Folder.Items
                     .Where(r => r.IsVisible && r.FileName
                     .Contains(SearchTerm, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     <div class="custom-list-item @(replay.IsSelected ? "selected" : "")"
-                         @onclick="() => SelectReplay(replay.FullPath)">
+                         @onclick="() => SelectItem(replay.FullPath)">
                         <div class="custom-list-item-content" title="@replay.FullPath">
                             @replay.FileName
                         </div>
@@ -40,10 +40,10 @@
 
 @code {
     [Parameter]
-    public ReplayFolderUi Folder { get; set; } = default!;
+    public CustomFolder Folder { get; set; } = default!;
 
     [Parameter]
-    public EventCallback<string> OnSelectReplay { get; set; }
+    public EventCallback<string> OnSelectedItem { get; set; }
 
     [Parameter]
     public string SearchTerm { get; set; } = string.Empty;
@@ -54,8 +54,8 @@
         StateHasChanged();
     }
 
-    private void SelectReplay(string fullPath)
+    private void SelectItem(string fullPath)
     {
-        OnSelectReplay.InvokeAsync(fullPath);
+        OnSelectedItem.InvokeAsync(fullPath);
     }
 }

@@ -9,8 +9,8 @@ namespace ONIZAnalyzer.Client.Pages;
 
 public partial class Home
 {
-    public List<ReplayFolderUi> Folders { get; set; } = [];
-    public List<ReplayFolderUi> AllFolders { get; set; } = [];
+    public List<CustomFolder> Folders { get; set; } = [];
+    public List<CustomFolder> AllFolders { get; set; } = [];
 
     public string? SelectedReplayPath;
     public string SearchTerm { get; set; } = string.Empty;
@@ -48,7 +48,7 @@ public partial class Home
                 throw new Exception($"HTTP error! status: {response.StatusCode}");
             }
 
-            var folderDtos = await response.Content.ReadFromJsonAsync<List<ReplayFolderDto>>();
+            var folderDtos = await response.Content.ReadFromJsonAsync<List<CustomFolderDto>>();
 
             if (folderDtos != null)
             {
@@ -69,22 +69,22 @@ public partial class Home
         }
     }
 
-    private List<ReplayFolderUi> ConvertToUiModels(List<ReplayFolderDto> dtos)
+    private List<CustomFolder> ConvertToUiModels(List<CustomFolderDto> dtos)
     {
-        var result = new List<ReplayFolderUi>();
+        var result = new List<CustomFolder>();
 
         foreach (var dto in dtos)
         {
-            var uiFolder = new ReplayFolderUi
+            var uiFolder = new CustomFolder
             {
                 FolderName = dto.FolderName,
                 FullPath = dto.FullPath,
                 IsOpen = false
             };
 
-            if (dto.Replays is { })
+            if (dto.Items is { })
             {
-                uiFolder.Replays = dto.Replays.Select(r => new ReplayFileUi
+                uiFolder.Items = dto.Items.Select(r => new FileItem
                 {
                     FileName = r.FileName,
                     FullPath = r.FullPath,
@@ -111,9 +111,9 @@ public partial class Home
         }
     }
 
-    private void SetAutoExpand(ReplayFolderUi folder)
+    private void SetAutoExpand(CustomFolder folder)
     {
-        var hasReplays = folder.Replays?.Any() == true;
+        var hasReplays = folder.Items?.Any() == true;
         var hasSubfolders = folder.SubFolders?.Any() == true;
 
         folder.IsOpen = hasReplays || hasSubfolders;
@@ -143,11 +143,11 @@ public partial class Home
         StateHasChanged();
     }
 
-    private void DeselectAllReplays(List<ReplayFolderUi> folderList)
+    private void DeselectAllReplays(List<CustomFolder> folderList)
     {
         foreach (var folder in folderList)
         {
-            foreach (var replay in folder.Replays)
+            foreach (var replay in folder.Items)
             {
                 replay.IsSelected = false;
             }
@@ -159,11 +159,11 @@ public partial class Home
         }
     }
 
-    private ReplayFileUi? FindReplay(List<ReplayFolderUi> folderList, string fullPath)
+    private FileItem? FindReplay(List<CustomFolder> folderList, string fullPath)
     {
         foreach (var folder in folderList)
         {
-            var replay = folder.Replays.FirstOrDefault(r => r.FullPath == fullPath);
+            var replay = folder.Items.FirstOrDefault(r => r.FullPath == fullPath);
 
             if (replay is { })
             {

@@ -18,7 +18,7 @@
         @foreach (var folder in Folders.Where(f => f.IsVisible))
         {
             <FolderView Folder="folder"
-                        OnSelectReplay="@OnSelectReplay"
+                        OnSelectedItem="@OnSelectedItem"
                         SearchTerm="@SearchTerm" />
         }
     }
@@ -27,7 +27,7 @@
 
 @code {
     [Parameter]
-    public IReadOnlyList<ReplayFolderUi>? Folders { get; set; }
+    public IReadOnlyList<CustomFolder>? Folders { get; set; }
 
     [Parameter]
     public string? ErrorMessage { get; set; }
@@ -44,5 +44,5 @@
     public string SearchTerm { get; set; } = string.Empty;
 
     [Parameter]
-    public EventCallback<string> OnSelectReplay { get; set; }
+    public EventCallback<string> OnSelectedItem { get; set; }
 }

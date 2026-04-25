@@ -1,6 +1,6 @@
 ﻿namespace ONIZAnalyzer.Common;
 
-public class ReplayFileDto
+public class FileItemDto
 {
     public string FileName { get; init; } = default!;
     public string FullPath { get; init; } = default!;

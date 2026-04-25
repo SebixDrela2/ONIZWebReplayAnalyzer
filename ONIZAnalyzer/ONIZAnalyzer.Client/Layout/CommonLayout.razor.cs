@@ -5,8 +5,8 @@ namespace ONIZAnalyzer.Client.Layout;
 public partial class CommonLayout
 {
     public static object SideBarSection { get; } = new object();
-    public List<ReplayFolderUi> Folders { get; set; } = [];
-    public List<ReplayFolderUi> AllFolders { get; set; } = [];
+    public List<CustomFolder> Folders { get; set; } = [];
+    public List<CustomFolder> AllFolders { get; set; } = [];
 
     public string SearchTerm { get; set; } = string.Empty;
 
@@ -24,13 +24,13 @@ public partial class CommonLayout
         UpdateFolderList();
     }
 
-    private void ResetVisibility(List<ReplayFolderUi> folderList)
+    private void ResetVisibility(List<CustomFolder> folderList)
     {
         foreach (var folder in folderList)
         {
             folder.IsVisible = true;
 
-            foreach (var replay in folder.Replays)
+            foreach (var replay in folder.Items)
             {
                 replay.IsVisible = true;
             }
@@ -42,7 +42,7 @@ public partial class CommonLayout
         }
     }
 
-    private bool ApplySearchFilter(List<ReplayFolderUi> folderList, string searchTerm)
+    private bool ApplySearchFilter(List<CustomFolder> folderList, string searchTerm)
     {
         bool anyVisible = false;
 
@@ -50,7 +50,7 @@ public partial class CommonLayout
         {
             var hasVisibleReplay = false;
 
-            foreach (var replay in folder.Replays)
+            foreach (var replay in folder.Items)
             {
                 replay.IsVisible = replay.FileName.ToLower().Contains(searchTerm);
 
