@@ -58,12 +58,18 @@
 	</div>
 </div>
 
-<SectionContent SectionId="CommonLayout.SideBarSection">
+<SectionContent SectionId="CommonLayout.FolderSection">
 	<FolderViewTree Folders="Folders"
 					ErrorMessage="@ErrorMessage"
 					LoadingMessage="Loading replays..."
 					NoDataMessage="No replays found"
 					OnSelectedItem="SelectReplay"
 					SearchTerm="@SearchTerm" />
+</SectionContent>
+
+<SectionContent SectionId="CommonLayout.SearchSection">
+	<ItemSearch OnSearch="UpdateVisibility"
+				OnClear="ClearSearch">
+	</ItemSearch>
 </SectionContent>
 

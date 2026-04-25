@@ -3,7 +3,7 @@ using ONIZAnalyzer.Common;
 
 namespace ONIZAnalyzer.Client.Pages;
 
-public abstract class ONIZPage : ComponentBase
+public abstract partial class ONIZPage : ComponentBase
 {
     public IReadOnlyList<CustomFolder> Folders { get; set; } = [];
 
@@ -97,5 +97,83 @@ public abstract class ONIZPage : ComponentBase
         Loading = true;
         ErrorMessage = null;
         StateHasChanged();
+    }
+
+    protected void UpdateVisibility()
+    {
+        if (string.IsNullOrEmpty(SearchTerm))
+        {
+            ResetVisibility(Folders);
+        }
+        else
+        {
+            ApplySearchFilter(Folders, SearchTerm.ToLower());
+        }
+
+        UpdateFolderList();
+        StateHasChanged();
+    }
+
+    protected void ClearSearch()
+    {
+        SearchTerm = string.Empty;
+        UpdateVisibility();
+        StateHasChanged();
+    }
+
+    private void ResetVisibility(IReadOnlyList<CustomFolder> folderList)
+    {
+        foreach (var folder in folderList)
+        {
+            folder.IsVisible = true;
+
+            foreach (var replay in folder.Items)
+            {
+                replay.IsVisible = true;
+            }
+
+            if (folder.SubFolders != null)
+            {
+                ResetVisibility(folder.SubFolders);
+            }
+        }
+    }
+
+    private bool ApplySearchFilter(IReadOnlyList<CustomFolder> folderList, string searchTerm)
+    {
+        bool anyVisible = false;
+
+        foreach (var folder in folderList)
+        {
+            var hasVisibleReplay = false;
+
+            foreach (var replay in folder.Items)
+            {
+                replay.IsVisible = replay.Name.ToLower().Contains(searchTerm);
+
+                if (replay.IsVisible)
+                {
+                    hasVisibleReplay = true;
+                    folder.IsOpen = true;
+                }
+            }
+
+            var hasVisibleSubfolder = false;
+
+            if (folder.SubFolders != null)
+            {
+                hasVisibleSubfolder = ApplySearchFilter(folder.SubFolders, searchTerm);
+            }
+
+            folder.IsVisible = hasVisibleReplay || hasVisibleSubfolder;
+            anyVisible = anyVisible || folder.IsVisible;
+        }
+
+        return anyVisible;
+    }
+
+    private void UpdateFolderList()
+    {
+        Folders = Folders.Where(f => f.IsVisible).ToList();
     }
 }

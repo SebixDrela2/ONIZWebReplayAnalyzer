@@ -1,0 +1,29 @@
+﻿@using ONIZAnalyzer.Common
+<div class="search-container">
+    <input type="text" class="search-input"
+           placeholder="Search..."
+           @bind="SearchTerm"
+           @onchange="Search"
+           @bind:event="oninput" />
+
+    <span class="search-clear"
+          @onclick="ClearSearch"
+          style="@(string.IsNullOrEmpty(SearchTerm) ? "display:none;" : null)">
+        ✕
+    </span>
+</div>
+
+@code {
+    private string SearchTerm { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback OnSearch { get; set; }
+
+    [Parameter]
+    public EventCallback OnClear { get; set; }
+
+
+    private async Task ClearSearch() => await OnClear.InvokeAsync();
+
+    private async Task Search() => await OnSearch.InvokeAsync();
+}

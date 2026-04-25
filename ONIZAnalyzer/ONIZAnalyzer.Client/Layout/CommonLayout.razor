@@ -3,20 +3,9 @@
 @layout MainLayout
 
 <div class="page-layout">
-    <div class="sidebar">
-        <div class="search-container">
-            <input type="text" class="search-input"
-                   placeholder="Search..."
-                   @bind="SearchTerm"
-                   @bind:event="oninput" />
-
-            <span class="search-clear"
-                  @onclick="ClearSearch"
-                  style="@(string.IsNullOrEmpty(SearchTerm) ? "display:none;" : null)">
-                ✕
-            </span>
-        </div>
-        <SectionOutlet SectionId="SideBarSection"></SectionOutlet>                
+    <div class="sidebar">      
+        <SectionOutlet SectionId="SearchSection"></SectionOutlet>
+        <SectionOutlet SectionId="FolderSection"></SectionOutlet>                
     </div>
 
     <div class="main-content">
