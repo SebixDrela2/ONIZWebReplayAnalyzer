@@ -1,4 +1,6 @@
-﻿using ONIZAnalyzer.Core.Serializer.CareerData;
+﻿using ONIZAnalyzer.Common.Models.Record;
+using ONIZAnalyzer.Core.Helpers.Record;
+using ONIZAnalyzer.Core.Serializer.CareerData;
 
 namespace OhNoItsZombiesAnalyzer.Models;
 
@@ -32,3 +34,8 @@ public class FileUi : FileDto
 
 public record class NameHandle(string Name, string Handle);
 public record class OnizHandleCareerData(NameHandle Tuple, OnizPlayerCareerData Data);
+
+public class OnizPlayerCareerDataComparer(Func<OnizPlayerCareerData, OnizPlayerCareerData, int> func) : IComparer<OnizPlayerCareerData>
+{  
+    public int Compare(OnizPlayerCareerData? x, OnizPlayerCareerData? y) => func(x, y);
+}

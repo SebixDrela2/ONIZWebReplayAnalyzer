@@ -10,7 +10,6 @@ public partial class PlayerDatabase
     private string ProfileImageSrc { get; set; } = string.Empty;
 
     private OnizRecordSortOption[] SortOptions = [];
-    private OnizRecordSortOption SelectedSortOption = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,13 +78,7 @@ public partial class PlayerDatabase
                 throw new Exception($"HTTP error! status: {response.StatusCode}");
             }
 
-            var folderDto = await response.Content.ReadFromJsonAsync<CustomFolderDto>();
-
-            if (folderDto != null)
-            {
-                SetFoldersFromDto([folderDto]);
-                AutoExpandFoldersWithContent();
-            }
+            await SetCustomFolders(response);
         }
         catch (Exception ex)
         {
@@ -113,8 +106,31 @@ public partial class PlayerDatabase
         SortOptions = sortOptions!;
     }
 
-    private void OnSortChanged(OnizRecordSortOption onizRecordSortOption)
+    private async Task OnSortChangedAsync(OnizRecordSortOption onizRecordSortOption)
     {
-        SelectedSortOption = onizRecordSortOption;
+        if(onizRecordSortOption.OptionName is "None")
+        {
+            return;
+        }
+
+        var response = await Client.PostAsync("/api/records/handle", JsonContent.Create<OnizRecordSortOption>(onizRecordSortOption));
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"HTTP error! status: {response.StatusCode}");
+        }
+
+        await SetCustomFolders(response);
+    }
+
+    private async Task SetCustomFolders(HttpResponseMessage response)
+    {
+        var folderDto = await response.Content.ReadFromJsonAsync<CustomFolderDto>();
+
+        if (folderDto != null)
+        {
+            SetFoldersFromDto([folderDto]);
+            AutoExpandFoldersWithContent();
+        }
     }
 }

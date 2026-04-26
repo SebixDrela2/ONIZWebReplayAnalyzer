@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ONIZAnalyzer.Common.Models.Record;
 using ONIZAnalyzer.Services;
 
 namespace ONIZAnalyzer.Controllers;
@@ -20,6 +21,14 @@ public class RecordsController : ControllerBase
         var sortOptions = _recordsService.GetSortOptions();
 
         return Ok(sortOptions);
+    }
+
+    [HttpPost("handle")]
+    public IActionResult GetSortedRecords([FromBody] OnizRecordSortOption sortOption)
+    {
+        var records = _recordsService.GetHandleDataFolderSorted(sortOption);
+
+        return Ok(records);
     }
 
     [HttpGet("handle")]

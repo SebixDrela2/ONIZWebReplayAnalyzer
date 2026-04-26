@@ -4,6 +4,7 @@ using ONIZAnalyzer.Common.Models;
 using ONIZAnalyzer.Common.Models.Record;
 using ONIZAnalyzer.Core.Helpers.Record;
 using ONIZAnalyzer.Core.Serializer.CareerData;
+using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -37,17 +38,22 @@ public partial class RecordsService
     {
         var serializedNameHandleData = GetSerializedNameHandleData();
 
-        return new CustomFolderDto
+        return GetFolderDto(serializedNameHandleData);
+    }
+
+    public CustomFolderDto GetHandleDataFolderSorted(OnizRecordSortOption sortOption)
+    {
+        if (sortOption.OptionName is "None")
         {
-            FolderName = HandleData,
-            SubFolders = [],
-            FullPath = HandleData,
-            Items = [.. serializedNameHandleData.Select(handleData => new FileItemDto 
-            {
-                Name = $"{handleData.Handle} {handleData.Name}",
-                Path = handleData.Handle
-            })]
-        };
+            return GetHandleDataFolder();
+        }
+        var comparer = _recordProvider.GetCareerComparer(sortOption);
+        var careerDatas = GetOnizHandleCareerDatas()
+            .OrderByDescending(x => x.Data, comparer);
+
+        var nameHandles = careerDatas.Select(careerData => careerData.Tuple);
+
+        return GetFolderDto(nameHandles);
     }
 
     public async Task<string> GetProfileImageAsync(string handle)
@@ -77,6 +83,21 @@ public partial class RecordsService
 
     public OnizRecordSortOption[] GetSortOptions() => _recordProvider.ProvideSortOptions();
 
+    private CustomFolderDto GetFolderDto(IEnumerable<NameHandle> nameHandles)
+    {
+        return new CustomFolderDto
+        {
+            FolderName = HandleData,
+            SubFolders = [],
+            FullPath = HandleData,
+            Items = [.. nameHandles.Select(handleData => new FileItemDto
+            {
+                Name = $"{handleData.Handle} {handleData.Name}",
+                Path = handleData.Handle
+            })]
+        };
+    }
+
     private IReadOnlyList<NameHandle> GetSerializedNameHandleData()
     {
         var handleMapJson = File.ReadAllText(HandleMapFolderPath);
@@ -85,20 +106,41 @@ public partial class RecordsService
         return [..handleMapData.Select(handleMap => new NameHandle(handleMap.Name, handleMap.Handle))];
     }
 
+    private OnizHandleCareerData[] GetOnizHandleCareerDatas()
+    {
+        var (handleMaps, careerDatas) = GetHandleMapWithCareerData();
+
+        var onizHandleCareerData = handleMaps.Select(handleMap =>
+        {
+            var careerData = careerDatas.Single(careerData => careerData.Key == handleMap.Handle);
+            var nameHandle = new NameHandle(handleMap.Name, handleMap.Handle);
+
+            return new OnizHandleCareerData(nameHandle, careerData.Value);
+
+        }).ToArray();
+
+        return onizHandleCareerData;
+    }
+
     private OnizHandleCareerData GetOnizHandleCareerData(string handle)
+    {
+        var (handleMaps, careerDatas) = GetHandleMapWithCareerData();
+
+        var playerCareerData = careerDatas.Single(careerData => careerData.Key == handle).Value;
+        var handleMap = handleMaps.Single(handleMap => handleMap.Handle == handle);
+
+        return new OnizHandleCareerData(new NameHandle(handleMap.Name, handleMap.Handle), playerCareerData);
+    }
+
+    private (IReadOnlyList<(string Name, string Handle)> HandleMap, Dictionary<string, OnizPlayerCareerData> CareerData) GetHandleMapWithCareerData()
     {
         var careerDataJson = File.ReadAllText(CareerDataFolderPath);
         var handleMapJson = File.ReadAllText(HandleMapFolderPath);
 
-        var onizCareerData = JsonSerializer
-            .Deserialize<Dictionary<string, OnizPlayerCareerData>>(careerDataJson)!
-            .Single(careerData => careerData.Key == handle)
-            .Value;
-
+        var onizCareerData = JsonSerializer.Deserialize<Dictionary<string, OnizPlayerCareerData>>(careerDataJson)!;
         var handleMapData = JsonSerializer.Deserialize<IReadOnlyList<(string Name, string Handle)>>(handleMapJson, new JsonSerializerOptions { IncludeFields = true })!;
-        var handleMap = handleMapData.Single(handleMap => handleMap.Handle == handle);
 
-        return new OnizHandleCareerData(new NameHandle(handleMap.Name, handleMap.Handle), onizCareerData);
+        return (handleMapData, onizCareerData);
     }
 
     private string GetHandlePath(string handle)
