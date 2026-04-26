@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
-using ONIZAnalyzer.Common;
+using ONIZAnalyzer.Common.Models;
 using ONIZAnalyzer.Common.WebSocket;
 using System.Net.Http.Json;
 using System.Web;

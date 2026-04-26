@@ -1,4 +1,7 @@
 ﻿.analyze-section {
+    display: flex;
+    flex-direction: column;
+    gap:16px;
     margin-bottom: 24px;
     padding: 24px;
     background: rgba(10, 20, 15, 0.8);
@@ -55,7 +58,6 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-bottom: 16px;
     display: block;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     text-transform: uppercase;

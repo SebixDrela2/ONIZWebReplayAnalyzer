@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ONIZAnalyzer.Common;
+using ONIZAnalyzer.Common.Models;
 
 namespace ONIZAnalyzer.Client.Pages;
 

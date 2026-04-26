@@ -6,6 +6,10 @@
 @layout CommonLayout
 @inherits ONIZPage
 
+
+<SortListBox Options="SortOptions"
+			 SelectedOptionChanged="OnSortChanged" />
+
 <div class="analysis-textbox-container">
 	<div id="analysisTextbox" class="analysis-textbox">
 		@if (string.IsNullOrEmpty(RecordResult))

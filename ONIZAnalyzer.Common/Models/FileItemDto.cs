@@ -1,4 +1,4 @@
-﻿namespace ONIZAnalyzer.Common;
+﻿namespace ONIZAnalyzer.Common.Models;
 
 public class FileItemDto
 {

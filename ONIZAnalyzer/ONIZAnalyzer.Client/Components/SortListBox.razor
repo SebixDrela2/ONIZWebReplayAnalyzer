@@ -1,0 +1,95 @@
+﻿@using ONIZAnalyzer.Common.Models.Record
+
+<div class="analyze-sort-wrapper">
+
+    <button type="button"
+            class="analyze-sort-header"
+            @onclick="ToggleExpanded">
+
+        <span class="analyze-sort-arrow @(isExpanded ? "expanded" : "")">
+            ▶
+        </span>
+
+        @if (SelectedOption is not null)
+        {
+            <span class="analyze-sort-prefix">
+                @GetPrefix(SelectedOption.OptionType)
+            </span>
+
+            <span class="analyze-sort-name">
+                @(SelectedOption.OptionType == OnizRecordOptionType.None
+                    ? "None"
+                    : SelectedOption.OptionName)
+            </span>
+        }
+    </button>
+
+    @if (isExpanded)
+    {
+        <div class="analyze-sort-dropdown">
+            @foreach (var option in Options)
+            {
+                var isSelected = EqualityComparer<OnizRecordSortOption>
+                    .Default.Equals(option, SelectedOption);
+
+                <button type="button"
+                        class="analyze-sort-item @(isSelected ? "selected" : "")"
+                        @onclick="() => SelectOption(option)">
+
+                    <span class="analyze-sort-prefix">
+                        @GetPrefix(option.OptionType)
+                    </span>
+
+                    <span class="analyze-sort-name">
+                        @(option.OptionType == OnizRecordOptionType.None
+                            ? "None"
+                            : option.OptionName)
+                    </span>
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public OnizRecordSortOption[] Options { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<OnizRecordSortOption> SelectedOptionChanged { get; set; }
+
+    [Parameter]
+    public OnizRecordSortOption? SelectedOption { get; set; }
+
+    private bool isExpanded;
+
+    protected override void OnParametersSet()
+    {
+        if (SelectedOption is null && Options.Length > 0)
+        {
+            SelectedOption = Options[0];
+        }
+    }
+
+    private void ToggleExpanded()
+    {
+        isExpanded = !isExpanded;
+    }
+
+    private async Task SelectOption(OnizRecordSortOption option)
+    {
+        SelectedOption = option;
+
+        isExpanded = false;
+
+        await SelectedOptionChanged.InvokeAsync(option);
+    }
+
+    private static string GetPrefix(OnizRecordOptionType type) => type switch
+    {
+        OnizRecordOptionType.General => "G",
+        OnizRecordOptionType.Marine => "M",
+        OnizRecordOptionType.Zombie => "Z",
+        _ => "-"
+    };
+}

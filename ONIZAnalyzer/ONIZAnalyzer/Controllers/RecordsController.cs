@@ -14,10 +14,19 @@ public class RecordsController : ControllerBase
         _recordsService = recordsService;
     }
 
+    [HttpGet("sort")]
+    public IActionResult GetSortOptions()
+    {
+        var sortOptions = _recordsService.GetSortOptions();
+
+        return Ok(sortOptions);
+    }
+
     [HttpGet("handle")]
     public IActionResult GetRecords()
     {
         var records = _recordsService.GetHandleDataFolder();
+
         return Ok(records);
     }
 

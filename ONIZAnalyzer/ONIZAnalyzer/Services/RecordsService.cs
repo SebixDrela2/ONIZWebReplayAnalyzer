@@ -1,5 +1,7 @@
 ﻿using OhNoItsZombiesAnalyzer.Models;
 using ONIZAnalyzer.Common;
+using ONIZAnalyzer.Common.Models;
+using ONIZAnalyzer.Common.Models.Record;
 using ONIZAnalyzer.Core.Helpers.Record;
 using ONIZAnalyzer.Core.Serializer.CareerData;
 using System.Text.Json;
@@ -25,6 +27,8 @@ public partial class RecordsService
 
     private static readonly string CareerDataFolderPath = Path.Combine(HandleDataFolderPath, HandlesData);
     private static readonly string HandleMapFolderPath = Path.Combine(HandleDataFolderPath, HandlesMap);
+
+    private static readonly OnizRecordProvider _recordProvider = new();
 
     [GeneratedRegex(@"(\d+)-S2-(\d+)-(\d+)")]
     private static partial Regex HandleRegex();
@@ -70,6 +74,8 @@ public partial class RecordsService
 
         return recordHandler.GetRecordText();
     }
+
+    public OnizRecordSortOption[] GetSortOptions() => _recordProvider.ProvideSortOptions();
 
     private IReadOnlyList<NameHandle> GetSerializedNameHandleData()
     {

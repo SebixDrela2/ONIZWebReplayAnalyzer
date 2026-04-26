@@ -27,8 +27,14 @@ public class OnizPlayerCareerContextHandler(string directoryPath)
 
         var firstDayOfService = orderedGames.First().TimeGameStarted;
         var lastDayOfService = orderedGames.Last().TimeGameStarted;
-
-        var monthsService = lastDayOfService.Month - firstDayOfService.Month;
+        var monthsService =
+            ((lastDayOfService.Year - firstDayOfService.Year) * 12) +
+            lastDayOfService.Month - firstDayOfService.Month;
+       
+        if (lastDayOfService.Day < firstDayOfService.Day)
+        {
+            monthsService--;
+        }
 
         return new OnizGeneralCareerData
         {

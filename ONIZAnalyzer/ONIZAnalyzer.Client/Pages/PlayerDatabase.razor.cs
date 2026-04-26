@@ -1,4 +1,5 @@
-﻿using ONIZAnalyzer.Common;
+﻿using ONIZAnalyzer.Common.Models;
+using ONIZAnalyzer.Common.Models.Record;
 using System.Net.Http.Json;
 
 namespace ONIZAnalyzer.Client.Pages;
@@ -8,6 +9,9 @@ public partial class PlayerDatabase
     private string RecordResult { get; set; } = string.Empty;
     private string ProfileImageSrc { get; set; } = string.Empty;
 
+    private OnizRecordSortOption[] SortOptions = [];
+    private OnizRecordSortOption SelectedSortOption = null!;
+
     protected override async Task OnInitializedAsync()
     {
         if (RendererInfo.Name is "Static")
@@ -16,6 +20,7 @@ public partial class PlayerDatabase
         }
 
         await LoadRecords();
+        await LoadSortOptions();
     }
 
     private async Task LoadProfileImage(string handle)
@@ -92,5 +97,24 @@ public partial class PlayerDatabase
             Loading = false;
             StateHasChanged();
         }
+    }
+
+    private async Task LoadSortOptions()
+    {
+        var response = await Client.GetAsync("/api/records/sort");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"HTTP error! status: {response.StatusCode}");
+        }
+
+        var sortOptions = await response.Content.ReadFromJsonAsync<OnizRecordSortOption[]>();
+
+        SortOptions = sortOptions!;
+    }
+
+    private void OnSortChanged(OnizRecordSortOption onizRecordSortOption)
+    {
+        SelectedSortOption = onizRecordSortOption;
     }
 }
