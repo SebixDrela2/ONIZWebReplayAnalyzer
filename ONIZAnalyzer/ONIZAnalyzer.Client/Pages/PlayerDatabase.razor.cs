@@ -1,13 +1,10 @@
 ﻿using ONIZAnalyzer.Common;
-using System.Net;
 using System.Net.Http.Json;
-using System.Text.RegularExpressions;
 
 namespace ONIZAnalyzer.Client.Pages;
 
 public partial class PlayerDatabase
 {
-    private const string ArcadeWebSiteProfile = "https://sc2arcade.com/api/profiles";
     private string RecordResult { get; set; } = string.Empty;
     private string ProfileImageSrc { get; set; } = string.Empty;
 
@@ -23,7 +20,6 @@ public partial class PlayerDatabase
 
     private async Task LoadProfileImage(string handle)
     {
-
         using var httpClient = new HttpClient();
         var response = await Client.GetAsync($"api/records/profile-img/{handle}");
         var src = await response.Content.ReadAsStringAsync();

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ONIZAnalyzer.Services;
-using System.Net;
 
 namespace ONIZAnalyzer.Controllers;
 

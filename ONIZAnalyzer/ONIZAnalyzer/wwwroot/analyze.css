@@ -181,5 +181,15 @@
     color: hsl(from currentColor h s calc(l * .5));
 }
 
+.vertical-content {
+    display: block;
+}
+
+.profile-img {
+    width: 100px;
+    height: 100px;
+    padding-bottom: 10px;
+}
+
 
 
