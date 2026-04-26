@@ -41,3 +41,14 @@
 		        OnClear="ClearSearch">	         
 	</ItemSearch>
 </SectionContent>
+
+<script>
+	document.addEventListener('click', function(e) {
+		const dropdown = document.querySelector('.analyze-sort-dropdown');
+		const header = document.querySelector('.analyze-sort-header');
+
+		if (dropdown && header && !header.contains(e.target) && !dropdown.contains(e.target)) {
+			header.click();
+		}
+	});
+</script>

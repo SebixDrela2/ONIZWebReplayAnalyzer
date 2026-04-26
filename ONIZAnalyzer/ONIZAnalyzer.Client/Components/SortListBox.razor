@@ -1,12 +1,12 @@
 ﻿@using ONIZAnalyzer.Common.Models.Record
 
 <div class="analyze-sort-wrapper">
-
     <button type="button"
             class="analyze-sort-header"
-            @onclick="ToggleExpanded">
+            @onclick="ToggleExpanded"
+            @onclick:stopPropagation="true">
 
-        <span class="analyze-sort-arrow @(isExpanded ? "expanded" : "")">
+        <span class="analyze-sort-arrow @(_isExpanded ? "expanded" : "")">
             ▶
         </span>
 
@@ -24,7 +24,7 @@
         }
     </button>
 
-    @if (isExpanded)
+    @if (_isExpanded)
     {
         <div class="analyze-sort-dropdown">
             @foreach (var option in Options)
@@ -34,7 +34,8 @@
 
                 <button type="button"
                         class="analyze-sort-item @(isSelected ? "selected" : "")"
-                        @onclick="() => SelectOption(option)">
+                        @onclick="() => SelectOption(option)"
+                        @onclick:stopPropagation="true">
 
                     <span class="analyze-sort-prefix">
                         @GetPrefix(option.OptionType)
@@ -61,7 +62,7 @@
     [Parameter]
     public OnizRecordSortOption? SelectedOption { get; set; }
 
-    private bool isExpanded;
+    private bool _isExpanded;
 
     protected override void OnParametersSet()
     {
@@ -73,15 +74,13 @@
 
     private void ToggleExpanded()
     {
-        isExpanded = !isExpanded;
+        _isExpanded = !_isExpanded;
     }
 
     private async Task SelectOption(OnizRecordSortOption option)
     {
         SelectedOption = option;
-
-        isExpanded = false;
-
+        _isExpanded = false;
         await SelectedOptionChanged.InvokeAsync(option);
     }
 
