@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ONIZAnalyzer.Core.Helpers;
+namespace ONIZAnalyzer.Core.Helpers.Replay;
 
 public class OnizReplayJudge(Dictionary<string, Sc2Replay> replays)
 {   

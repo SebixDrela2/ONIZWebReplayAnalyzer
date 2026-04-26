@@ -3,7 +3,7 @@ using Sc2ReplayAnalyzer.Decoder.Models.Details;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace OhNoItsZombiesAnalyzer.Core.Helpers;
+namespace ONIZAnalyzer.Core.Helpers.Replay;
 
 public static class OnizUtils
 {

@@ -1,8 +1,7 @@
 ﻿using OhNoItsZombiesAnalyzer.Core;
 using OhNoItsZombiesAnalyzer.Core.Contexts;
-using OhNoItsZombiesAnalyzer.Core.Helpers;
 using OhNoItsZombiesAnalyzer.Models;
-using ONIZAnalyzer.Core.Helpers;
+using ONIZAnalyzer.Core.Helpers.Replay;
 using ONIZAnalyzer.Core.Serializer;
 using Sc2ReplayAnalyzer.Decoder;
 using Sc2ReplayAnalyzer.Decoder.APIModel;
@@ -24,7 +23,7 @@ public class ReplayService
         var replay = _replayDecoder.DecodeReplay(fullPath);
         var replayHanlder = new OnizReplayHandler(replay);
 
-        return replayHanlder.GetSingleReplayAnalyzeText();
+        return replayHanlder.GetAnalyzeText();
     }
 
     public async Task MassAnalyzeReplays(Func<int, TimeSpan, Task> progressCallBack)

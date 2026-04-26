@@ -11,5 +11,7 @@ public class OnizMarineCareerData : OnizCareerDataBase
     public required int TotalAlphaKills { get; init; }
 
     [JsonIgnore]
-    public double AverageAlphaKillsPerGame => TotalAlphaKills / GamesPlayed;
+    public double AverageAlphaKillsPerGame => GamesPlayed is 0 
+        ? 0 
+        : Math.Round((double)TotalAlphaKills / GamesPlayed, 2);
 }

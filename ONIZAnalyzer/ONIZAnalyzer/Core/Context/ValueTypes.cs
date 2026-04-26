@@ -1,4 +1,4 @@
-﻿using OhNoItsZombiesAnalyzer.Core.Helpers;
+﻿using ONIZAnalyzer.Core.Helpers.Replay;
 
 namespace OhNoItsZombiesAnalyzer.Core.Context;
 

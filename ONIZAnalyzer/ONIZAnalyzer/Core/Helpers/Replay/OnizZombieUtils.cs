@@ -1,4 +1,4 @@
-﻿namespace OhNoItsZombiesAnalyzer.Core.Helpers;
+﻿namespace ONIZAnalyzer.Core.Helpers.Replay;
 
 public static class OnizZombieUtils
 {

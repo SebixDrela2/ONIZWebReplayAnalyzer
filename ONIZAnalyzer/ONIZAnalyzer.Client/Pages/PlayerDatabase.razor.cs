@@ -1,11 +1,15 @@
 ﻿using ONIZAnalyzer.Common;
+using System.Net;
 using System.Net.Http.Json;
+using System.Text.RegularExpressions;
 
 namespace ONIZAnalyzer.Client.Pages;
 
 public partial class PlayerDatabase
 {
-    private string SelectedHandle { get; set; } = string.Empty;
+    private const string ArcadeWebSiteProfile = "https://sc2arcade.com/api/profiles";
+    private string RecordResult { get; set; } = string.Empty;
+    private string ProfileImageSrc { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -14,18 +18,46 @@ public partial class PlayerDatabase
             return;
         }
 
-        Console.WriteLine("elo");
         await LoadRecords();
     }
 
-    private void SelectRecord(string handle)
+    private async Task LoadProfileImage(string handle)
+    {
+
+        using var httpClient = new HttpClient();
+        var response = await Client.GetAsync($"api/records/profile-img/{handle}");
+        var src = await response.Content.ReadAsStringAsync();
+
+        ProfileImageSrc = src;
+        StateHasChanged();
+    }
+
+    private async Task SelectRecord(string handle)
     {
         DeselectAllItems(Folders);
+        SetSelectedRecord(handle);
 
+        await LoadProfileImage(handle);
+        await SetSelectedRecordData(handle);
+    }
+
+    private void SetSelectedRecord(string handle)
+    {
         var record = FindRecord(handle);
-
         record.IsSelected = true;
-        SelectedHandle = handle;
+    }
+
+    private async Task SetSelectedRecordData(string handle)
+    {
+        var response = await Client.GetAsync($"/api/records/handle/{handle}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"HTTP error! status: {response.StatusCode}");
+        }
+
+        RecordResult = await response.Content.ReadAsStringAsync();
+        StateHasChanged();
     }
 
     private FileItem FindRecord(string handle) => Folders

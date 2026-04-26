@@ -1,10 +1,11 @@
-﻿using OhNoItsZombiesAnalyzer.Core.Context;
+﻿using OhNoItsZombiesAnalyzer.Core;
+using OhNoItsZombiesAnalyzer.Core.Context;
 using OhNoItsZombiesAnalyzer.Core.Contexts;
 using OhNoItsZombiesAnalyzer.Core.Enums;
 using Sc2ReplayAnalyzer.Decoder.APIModel;
 using System.Text;
 
-namespace OhNoItsZombiesAnalyzer.Core.Helpers;
+namespace ONIZAnalyzer.Core.Helpers.Replay;
 
 public class OnizReplayHandler(Sc2Replay replay)
 {
@@ -18,7 +19,7 @@ public class OnizReplayHandler(Sc2Replay replay)
         return _analyzer.GetReplayContext();
     }
 
-    public string GetSingleReplayAnalyzeText()
+    public string GetAnalyzeText()
     {
         var builder = new StringBuilder();
         var context = GetFullContext();

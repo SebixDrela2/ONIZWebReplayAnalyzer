@@ -38,6 +38,7 @@
     <ProjectReference Include="..\..\ONIZAnalyzer.Common\ONIZAnalyzer.Common.csproj" />
     <ProjectReference Include="..\ONIZAnalyzer.Client\ONIZAnalyzer.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.59.0" />
   </ItemGroup>
 
   <ItemGroup>

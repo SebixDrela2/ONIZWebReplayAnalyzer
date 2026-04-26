@@ -1,7 +1,7 @@
 ﻿using OhNoItsZombiesAnalyzer.Core.Context;
 using Sc2ReplayAnalyzer.Decoder.APIModel;
 
-namespace OhNoItsZombiesAnalyzer.Core.Helpers;
+namespace ONIZAnalyzer.Core.Helpers.Replay;
 
 public static class OnizMarineUtils
 {

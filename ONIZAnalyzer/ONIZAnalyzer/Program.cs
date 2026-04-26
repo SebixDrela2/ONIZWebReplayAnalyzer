@@ -33,7 +33,15 @@ namespace ONIZAnalyzer
                     client.BaseAddress = new Uri("https://localhost");
                 }
             });
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
