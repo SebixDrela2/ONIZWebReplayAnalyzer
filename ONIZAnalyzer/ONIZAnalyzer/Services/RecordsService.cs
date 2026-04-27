@@ -43,12 +43,22 @@ public partial class RecordsService
 
     public CustomFolderDto GetHandleDataFolderSorted(OnizRecordSortOption sortOption)
     {
-        if (sortOption.OptionName is "None")
+        if (sortOption.OptionType is OnizRecordOptionType.None)
         {
             return GetHandleDataFolder();
         }
+
         var comparer = _recordProvider.GetCareerComparer(sortOption);
         var careerDatas = GetOnizHandleCareerDatas()
+            .Where(careerData =>
+            {
+                if (sortOption.OptionType is OnizRecordOptionType.Marine)
+                {
+                    return careerData.Data.MarineCareerData.GamesPlayed > 50;
+                }
+
+                return careerData.Data.ZombieCareerData.GamesPlayed > 50;
+            })
             .OrderByDescending(x => x.Data, comparer);
 
         var nameHandles = careerDatas.Select(careerData => careerData.Tuple);

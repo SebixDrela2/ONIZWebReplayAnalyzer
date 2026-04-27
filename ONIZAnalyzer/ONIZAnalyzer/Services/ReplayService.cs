@@ -33,18 +33,9 @@ public class ReplayService
         EnsureCleanDirectoryExists(handleDataFolderPath);
 
         var replaySerializer = new ReplaySerializer(_replayPathRetriever.HandleDataFolderPath);
-        var replays = await DecodeUniqueReplays(progressCallBack);
+        var contexts = await DecodeUniqueReplayContexts(progressCallBack);
 
-        var replayFiles = replays.Select(x => x.FileName).ToList();
-        var contexts = replays
-            .Select(GetReplayContext)
-            .Where(context => context.IsValidContext)
-            .ToList();
-        
-        foreach(var context in contexts)
-        {
-            replaySerializer.SerializeContexts(contexts);
-        }
+        replaySerializer.SerializeContexts(contexts);
     }
 
     private void EnsureCleanDirectoryExists(string handleDataFolderPath)
@@ -65,34 +56,42 @@ public class ReplayService
         return context;
     }
 
-    private async Task<ICollection<Sc2Replay>> DecodeUniqueReplays(Func<int, TimeSpan, Task> progressCallback)
+    private async Task<ICollection<OnizReplayContext>> DecodeUniqueReplayContexts(Func<int, TimeSpan, Task> progressCallback)
     {
-        var uniqueReplays = new Dictionary<string, Sc2Replay>();
-        var replayJudge = new OnizReplayJudge(uniqueReplays);
-        var files = Directory.GetFiles(_replayPathRetriever.AccountsPath, Sc2Extension, SearchOption.AllDirectories);
+        var uniqueContexts = new Dictionary<string, OnizReplayContext>();
+        var replayJudge = new OnizReplayJudge(uniqueContexts);
+        var files = Directory.GetFiles(_replayPathRetriever.TrueReplaysPath, Sc2Extension, SearchOption.AllDirectories);
         var counter = 0;
         var progressTask = Task.CompletedTask;
         var watch = Stopwatch.StartNew();
-        
+
         foreach (var file in files)
         {
-            var replay = _replayDecoder.DecodeReplay(file);
-            counter++;
-         
-            if (progressTask.IsCompleted)
+            try
             {
-                var averageElapsed = watch.Elapsed / counter;
-                var averageTimeLeftForAnalyze = averageElapsed * (files.Length - counter);
+                var replay = _replayDecoder.DecodeReplay(file);
+                counter++;
 
-                progressTask = progressCallback(counter, averageTimeLeftForAnalyze);
+                if (progressTask.IsCompleted)
+                {
+                    var averageElapsed = watch.Elapsed / counter;
+                    var averageTimeLeftForAnalyze = averageElapsed * (files.Length - counter);
+
+                    progressTask = progressCallback(counter, averageTimeLeftForAnalyze);
+                }
+
+                replayJudge.Challenge(replay);
             }
-
-            replayJudge.Challenge(replay);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         await progressTask;
         await progressCallback(counter, TimeSpan.Zero);
 
-        return uniqueReplays.Values;
+        return uniqueContexts.Values;
     }
 }

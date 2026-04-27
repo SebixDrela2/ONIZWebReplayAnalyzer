@@ -4,7 +4,7 @@ namespace OhNoItsZombiesAnalyzer.Core.Context;
 
 public record ValueTypes(long GameLoop, string Value)
 {
-    private TimeSpan Span { get; } = TimeSpan.FromMilliseconds(OnizUtils.GameLoopToMilliseconds(GameLoop));
+    private TimeSpan Span { get; } = OnizUtils.GetTimeFromGameLoop(GameLoop);
 
     public string MinutesSeconds => $"{Span.Minutes:D2}:{Span.Seconds:D2}";
 }

@@ -1,5 +1,6 @@
 ﻿using OhNoItsZombiesAnalyzer.Core.Enums;
 using ONIZAnalyzer.Core.Context;
+using System.Text.Json.Serialization;
 
 namespace OhNoItsZombiesAnalyzer.Core.Contexts;
 
@@ -31,4 +32,8 @@ public class OnizReplayContext
     public int MarineCount => PlayerCount - 1;
     public bool IsProfessionalGame => MarineGrandMasterCount > 4;
     public MarineContext GetPlayerContext(int slotId) => MarineContext.Single(context => context.Slot == slotId);
+
+
+    [JsonIgnore]
+    public int ElapsedGameLoops;
 }

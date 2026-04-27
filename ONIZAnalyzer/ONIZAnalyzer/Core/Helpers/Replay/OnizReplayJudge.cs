@@ -1,18 +1,27 @@
-﻿using Sc2ReplayAnalyzer.Decoder.APIModel;
+﻿using OhNoItsZombiesAnalyzer.Core.Contexts;
+using Sc2ReplayAnalyzer.Decoder.APIModel;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace ONIZAnalyzer.Core.Helpers.Replay;
 
-public class OnizReplayJudge(Dictionary<string, Sc2Replay> replays)
-{   
+public class OnizReplayJudge(Dictionary<string, OnizReplayContext> replays)
+{
     public void Challenge(Sc2Replay replay)
     {
         var hash = Hash(replay);
 
-        if (!replays.TryGetValue(hash, out var existing) || replay.Header.ElapsedGameLoops > existing.Header.ElapsedGameLoops)
+        if (!replays.TryGetValue(hash, out var existing) || replay.Header.ElapsedGameLoops > existing.ElapsedGameLoops)
         {
-            replays[hash] = replay;
+            var replayHandler = new OnizReplayHandler(replay);
+            var context = replayHandler.GetFullContext();
+
+            if (!context.IsValidContext)
+            {               
+                return;
+            }
+            
+            replays[hash] = context;
         }
     }
 

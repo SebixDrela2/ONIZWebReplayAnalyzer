@@ -17,11 +17,15 @@ public static class OnizUtils
 
     public static string GetHandle(this Toon toon) => $"{toon.Region}-S2-{toon.Realm}-{toon.Id}";
 
-    public static TimeSpan GetTimeSpan(this int milliseconds) => TimeSpan.FromMilliseconds(milliseconds);
-
+    public static TimeSpan GetTimeFromGameLoop(long gameLoop) => TimeSpan.FromMilliseconds(GameLoopToMilliseconds(gameLoop));
     public static bool IsCorrectSlot(int controlPlayerId, int slot) => controlPlayerId - 1 == slot;
 
-    public static long GameLoopToMilliseconds(long gameLoops)
+    public static void AppendHeaderLine(this StringBuilder builder, string content)
+    {
+        builder.AppendLine($"<span class=\"analysis-textbox-header-line\">{content}</span><br>");
+    }
+
+    private static long GameLoopToMilliseconds(long gameLoops)
     {
         const double loopsPerSecond = 16.0;
         const double fasterMultiplier = 1.4;
@@ -31,10 +35,5 @@ public static class OnizUtils
         double ms = gameLoops * milisecondMultiplier;
 
         return (long)Math.Round(ms);
-    }
-
-    public static void AppendHeaderLine(this StringBuilder builder, string content)
-    {
-        builder.AppendLine($"<span class=\"analysis-textbox-header-line\">{content}</span><br>");
     }
 }

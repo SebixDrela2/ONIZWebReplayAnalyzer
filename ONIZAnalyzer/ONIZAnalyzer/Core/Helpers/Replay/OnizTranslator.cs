@@ -51,7 +51,7 @@ public class OnizTranslator
         _ => throw new InvalidOperationException($"Invalid translator: {translatorType}")
     };
 
-    public string GetPlayerName(int playerId)
+    public string? GetPlayerName(int playerId)
     {
         var players = _details.Players;
 
@@ -64,8 +64,6 @@ public class OnizTranslator
 
         return onizRace ?? "Zombie";
     }
-
-    public TimeSpan GetTimeFromGameLoop(long gameLoop) => TimeSpan.FromMilliseconds(OnizUtils.GameLoopToMilliseconds(gameLoop));
 
     private Dictionary<string, string> GetTranslations(string relativePath)
     {

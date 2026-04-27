@@ -19,6 +19,9 @@ public class OnizContextAnalyzer(Sc2Replay replay)
     private const string NoAlpha = "No Alpha";
     private const string OverMind = "Overmind";
     private const string ZombieRace = "Zerg";
+    private const string ChineseZombieRace = "异虫";
+    private const string KoreanZergRace = "저그";
+    private const string Subterranean = "Subterranean";
 
     private const int GrandMasterBarrier = 24;
     private const int VespeneStartLoop = 640;
@@ -43,10 +46,11 @@ public class OnizContextAnalyzer(Sc2Replay replay)
 
     private OnizReplayContext GetGeneralReplayContext()
     {
-        if (!replay.Details.Players.Any(player => player.Race is ZombieRace)
-            || replay.Details.Players.Count < 3)
+        var totalSeconds = OnizUtils.GetTimeFromGameLoop(replay.Header.ElapsedGameLoops).TotalSeconds;
+
+        if (IsInvalidReplay(totalSeconds))
         {
-            // Single player game, or some test game
+            // Single player game, or some test game, or subterrenean
             return new OnizReplayContext();
         }
 
@@ -61,7 +65,7 @@ public class OnizContextAnalyzer(Sc2Replay replay)
         var (marineRankAvg, zombieRank) = GetOnizRaceRanks(bankKeyEvents, zombieId, playerCount);
 
         replayContext.TimeGameStarted = DateTime.FromFileTime(replay.Details.Time);
-        replayContext.GameLength = replay.Header.ElapsedGameLoops.GetTimeSpan();
+        replayContext.GameLength = OnizUtils.GetTimeFromGameLoop(replay.Header.ElapsedGameLoops);
         replayContext.PlayerCount = playerCount;
         replayContext.MatchResult = GetMatchResult(replay.TrackerEvents.SUnitTypeChangeEvents);
 
@@ -73,16 +77,23 @@ public class OnizContextAnalyzer(Sc2Replay replay)
         replayContext.ZombieRank = zombieRank;
         replayContext.Advantage = GetOnizAdvantage(replay.TrackerEvents.SPlayerStatsEvents, zombieName);
         replayContext.MarineContext = [.. replay.Details.Players
-
             .Where(x => x.Name != zombieName)
             .Select(idx => new MarineContext{ Slot = (int)idx.Slot })];
         replayContext.ZombieContext = new ZombieContext { Slot = zombieId };
         replayContext.PlayersBankContext = [.. replay.Details.Players
             .Select(x => new BankContext { Slot = (int)x.Slot, Handle = x.Toon.GetHandle(), Name = x.Name })];
         replayContext.IsValidContext = true;
+        replayContext.ElapsedGameLoops = replay.Header.ElapsedGameLoops;
 
         return replayContext;
     }
+
+    private bool IsInvalidReplay(double totalSeconds) => 
+        !replay.Details.Players.Any(player => IsZergRace(player.Race))
+            || replay.Details.Title.Contains(Subterranean, StringComparison.OrdinalIgnoreCase) 
+            || replay.Details.Players.All(x => x.Slot == 0)
+            || replay.Details.Players.Count < 3
+            || totalSeconds < 30;
 
     private void AsignBankContext(IReadOnlyList<BankContext> bankContexts)
     {
@@ -260,4 +271,6 @@ public class OnizContextAnalyzer(Sc2Replay replay)
 
         return killCount;
     }
+
+    private bool IsZergRace(string race) => race is ZombieRace or ChineseZombieRace or KoreanZergRace;
 }

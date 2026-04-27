@@ -27,7 +27,12 @@ public class OnizReplayHandler(Sc2Replay replay)
         PrepareDetails(builder, context);
         PrepareCondition(builder, context);
         PreparePurchases(builder, context);
-        PrepareMessages(builder, context);
+
+        if (context.IsValidContext)
+        {
+            PrepareMessages(builder, context);
+        }
+
         PrepareEndGame(builder, context);
         PrepareMarineKills(builder, context);
         PrepareAlphaRatio(builder, context);
@@ -91,7 +96,7 @@ public class OnizReplayHandler(Sc2Replay replay)
 
         foreach(var message in messages)
         {
-            var time = _translator.GetTimeFromGameLoop(message.Loop);
+            var time = OnizUtils.GetTimeFromGameLoop(message.Loop);
             var playerName = _translator.GetPlayerName(message.Id);
 
             var content = $"[{time.Minutes:D2}:{time.Seconds:D2}] [{message.Recipient}] {playerName}: {message.Msg}";
