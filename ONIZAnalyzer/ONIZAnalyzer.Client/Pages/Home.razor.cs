@@ -24,7 +24,6 @@ public partial class Home
             return;
         }
 
-        Console.WriteLine("\e[31m(ERROR)\e[0m SOME ERROR MESSAGE \e[34mline 8\e[0m");
         await LoadReplays();
     }
     
