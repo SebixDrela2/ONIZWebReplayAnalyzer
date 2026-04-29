@@ -15,7 +15,7 @@ namespace OhNoItsZombiesAnalyzer.Services;
 public class ReplayService
 {
     private const string Sc2Extension = "*.SC2Replay";
-    private const int ConcurrentReplays = 20;
+    private static readonly int DegreeOfPararellism = Environment.ProcessorCount;
 
     private readonly ReplayPathsRetriever _replayPathRetriever = new();
     private readonly ReplayDecoder _replayDecoder = new();
@@ -30,53 +30,42 @@ public class ReplayService
         return replayHanlder.GetAnalyzeText();
     }
 
-    public async Task MassAnalyzeReplays(Func<int, TimeSpan, Task> progressCallBack)
+    public async Task MassAnalyzeReplaysAsync(Func<int, TimeSpan, Task> progressCallBack)
     {
         var handleDataFolderPath = _replayPathRetriever.HandleDataFolderPath;
 
-        EnsureCleanDirectoryExists(handleDataFolderPath);
+        EnsureDirectoryExists(handleDataFolderPath);
 
         var replaySerializer = new ReplaySerializer(_replayPathRetriever.HandleDataFolderPath);
-        var contexts = await DecodeUniqueReplayContexts(progressCallBack);
+        var contexts = await DecodeUniqueReplayContextsAsync(progressCallBack);
 
         replaySerializer.SerializeContexts(contexts);
     }
 
-    private void EnsureCleanDirectoryExists(string handleDataFolderPath)
+    private void EnsureDirectoryExists(string handleDataFolderPath)
     {
-        if (Directory.Exists(handleDataFolderPath))
+        if (!Directory.Exists(handleDataFolderPath))
         {
-            Directory.Delete(handleDataFolderPath, recursive: true);
+            Directory.CreateDirectory(handleDataFolderPath);
         }
-
-        Directory.CreateDirectory(handleDataFolderPath);
     }
 
-    private async Task<ICollection<OnizReplayContext>> DecodeUniqueReplayContexts(Func<int, TimeSpan, Task> progressCallback)
+    private async Task<ICollection<OnizReplayContext>> DecodeUniqueReplayContextsAsync(Func<int, TimeSpan, Task> progressCallback)
     {
         var contexts = new ConcurrentBag<OnizReplayContext>();
         var files = Directory.GetFiles(_replayPathRetriever.TrueReplaysPath, Sc2Extension, SearchOption.AllDirectories);
         var length = files.Length;
-        var counter = 0;
+        var counter = 1;
         var watch = Stopwatch.StartNew();
 
-        // Track the progress task with Interlocked for thread safety
-        var lastProgressTask = Task.CompletedTask;
-
-        await Parallel.ForEachAsync(files, new ParallelOptions { MaxDegreeOfParallelism = ConcurrentReplays }, async (file, cancellationToken) =>
+        var task = Parallel.ForEachAsync(files, new ParallelOptions { MaxDegreeOfParallelism = DegreeOfPararellism }, async (file, cancellationToken) =>
         {
             try
             {
                 var replayDecoder = new ReplayDecoder();
                 var replay = replayDecoder.DecodeReplay(file);
-                var incrementedCounter = Interlocked.Increment(ref counter);
-
-                var averageElapsed = watch.Elapsed / incrementedCounter;
-                var averageTimeLeftForAnalyze = averageElapsed * (length - incrementedCounter);
-
-                var newProgressTask = progressCallback(incrementedCounter, averageTimeLeftForAnalyze);
-                var oldTask = Interlocked.Exchange(ref lastProgressTask, newProgressTask);
-
+                Interlocked.Increment(ref counter);
+                
                 var replayHandler = new OnizReplayHandler(replay);
                 var context = replayHandler.GetFullContext();
 
@@ -97,8 +86,23 @@ public class ReplayService
             }
         });
 
-        await lastProgressTask;
-        await progressCallback(counter, TimeSpan.Zero);
+        while(!task.IsCompleted)
+        {
+            var currentCounter = Volatile.Read(ref counter);
+
+            var averageElapsed = watch.Elapsed / currentCounter;
+            var averageTimeLeftForAnalyze = averageElapsed * (length - currentCounter);
+
+            if (task.IsCompleted)
+            {
+                break;
+            }
+
+            await progressCallback(currentCounter, averageTimeLeftForAnalyze);
+            await Task.Delay(500);
+        }
+
+        await progressCallback(Volatile.Read(ref counter), TimeSpan.Zero);
 
         var uniqueContexts = contexts
             .GroupBy(x => x.Hash, (x, y) => y.MaxBy(z => z.ElapsedGameLoops))

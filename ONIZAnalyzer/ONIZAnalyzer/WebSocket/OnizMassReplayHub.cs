@@ -12,9 +12,10 @@ public class OnizMassReplayHub : Hub
     [HubMethodName(RequestMassReplayAnalysisMethodName)]
     public async Task StartMassReplayAnalysis([FromServices]ReplayService replayService)
     {
-        await replayService.MassAnalyzeReplays(async (int progress, TimeSpan averageTimeLeft) =>
-        {
-            await Clients.Caller.SendAsync(ResponseMassReplayAnalysisMethodName, progress, averageTimeLeft, CancellationToken.None);
-        });
+        var connectionId = Context.ConnectionId;
+        await replayService.MassAnalyzeReplaysAsync(SendAnalysisResponse);
+
+        async Task SendAnalysisResponse(int progress, TimeSpan averageTimeLeft) 
+            => await Clients.Client(connectionId).SendAsync(ResponseMassReplayAnalysisMethodName, progress, averageTimeLeft, CancellationToken.None);
     }
 }

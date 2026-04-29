@@ -39,4 +39,4 @@ public class OnizReplayJudge(Dictionary<OnizHash, OnizReplayContext> replays)
     }
 }
 
-public class OnizHash(long RandomValue, long Time);
+public record struct OnizHash(long RandomValue, long Time);

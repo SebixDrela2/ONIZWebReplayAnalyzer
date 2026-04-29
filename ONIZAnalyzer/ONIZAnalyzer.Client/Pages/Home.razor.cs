@@ -24,6 +24,7 @@ public partial class Home
             return;
         }
 
+        Console.WriteLine("\e[31m(ERROR)\e[0m SOME ERROR MESSAGE \e[34mline 8\e[0m");
         await LoadReplays();
     }
     
@@ -155,6 +156,7 @@ public partial class Home
             MassAnalyzedReplays = value;
             AverageTimeLeftForMassAnalyze = avgTimeLeft;
 
+            Console.WriteLine($"ETA: {value}, LEFT: {avgTimeLeft}");
             StateHasChanged();
         });
 
