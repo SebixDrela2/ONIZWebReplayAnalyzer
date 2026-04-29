@@ -22,6 +22,7 @@ public class OnizContextAnalyzer(Sc2Replay replay)
     private const string ChineseZombieRace = "异虫";
     private const string KoreanZergRace = "저그";
     private const string Subterranean = "Subterranean";
+    private const string Zombies = "Zombies";
 
     private const int GrandMasterBarrier = 24;
     private const int VespeneStartLoop = 640;
@@ -50,13 +51,13 @@ public class OnizContextAnalyzer(Sc2Replay replay)
 
         if (IsInvalidReplay(totalSeconds))
         {
-            // Single player game, or some test game, or subterrenean
+            // Single player game, some test game, or subterrenean or not even oniz replay.
             return new OnizReplayContext();
         }
 
         var replayContext = new OnizReplayContext();
-        var overMindBornEvent = replay.TrackerEvents.SUnitBornEvents.Single(e => e.UnitTypeName.Contains(OverMind));
-        replayContext.OverMindIndex = replay.TrackerEvents.SUnitBornEvents.First(e => e.UnitTypeName.Contains(OverMind)).UnitTagIndex;
+        var overMindBornEvent = replay.TrackerEvents.SUnitBornEvents.Single(e => e.UnitTypeName is OverMind);
+        replayContext.OverMindIndex = overMindBornEvent.UnitTagIndex;
 
         var playerCount = replay.Details.Players.Count - 1;
         var zombieId = replay.TrackerEvents.SUnitOwnerChangeEvents.First(e => e.UnitTagIndex == replayContext.OverMindIndex).ControlPlayerId - 1;
@@ -90,7 +91,8 @@ public class OnizContextAnalyzer(Sc2Replay replay)
 
     private bool IsInvalidReplay(double totalSeconds) => 
         !replay.Details.Players.Any(player => IsZergRace(player.Race))
-            || replay.Details.Title.Contains(Subterranean, StringComparison.OrdinalIgnoreCase) 
+            || replay.Details.Title.Contains(Subterranean, StringComparison.OrdinalIgnoreCase)
+            || !replay.Details.Title.Contains(Zombies)
             || replay.Details.Players.All(x => x.Slot == 0)
             || replay.Details.Players.Count < 3
             || totalSeconds < 30;
@@ -115,7 +117,7 @@ public class OnizContextAnalyzer(Sc2Replay replay)
         foreach(var entry in validBankEntries)
         {
             var translatedEntry = _translator.Translate(entry.Name, OnizTranslatorType.BankEntries);
-            bankValues.Add(new NameValue(translatedEntry, int.Parse(entry.Data)));
+            bankValues.Add(new NameValue(translatedEntry, long.Parse(entry.Data)));
         }
     }
 

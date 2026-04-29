@@ -24,7 +24,8 @@
             {
                 @foreach (var replay in Folder.Items
                     .Where(r => r.IsVisible && r.Name
-                    .Contains(SearchTerm, StringComparison.InvariantCultureIgnoreCase)))
+                    .Contains(SearchTerm, StringComparison.InvariantCultureIgnoreCase))
+                    .Take(MaxFolderCount))
                 {
                     <div class="custom-list-item @(replay.IsSelected ? "selected" : "")"
                          @onclick="() => SelectItem(replay.Path)">
@@ -39,6 +40,8 @@
 </div>
 
 @code {
+    private const int MaxFolderCount = 100;
+
     [Parameter]
     public CustomFolder Folder { get; set; } = default!;
 

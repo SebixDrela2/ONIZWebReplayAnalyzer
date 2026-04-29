@@ -1,10 +1,13 @@
-﻿using OhNoItsZombiesAnalyzer.Core;
+﻿using MPQArchive.MPQ.Utils;
+using OhNoItsZombiesAnalyzer.Core;
 using OhNoItsZombiesAnalyzer.Core.Contexts;
 using OhNoItsZombiesAnalyzer.Models;
 using ONIZAnalyzer.Core.Helpers.Replay;
 using ONIZAnalyzer.Core.Serializer;
 using Sc2ReplayAnalyzer.Decoder;
 using Sc2ReplayAnalyzer.Decoder.APIModel;
+using Sc2ReplayAnalyzer.Decoder.Exceptions;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace OhNoItsZombiesAnalyzer.Services;
@@ -12,6 +15,7 @@ namespace OhNoItsZombiesAnalyzer.Services;
 public class ReplayService
 {
     private const string Sc2Extension = "*.SC2Replay";
+    private const int ConcurrentReplays = 20;
 
     private readonly ReplayPathsRetriever _replayPathRetriever = new();
     private readonly ReplayDecoder _replayDecoder = new();
@@ -48,50 +52,66 @@ public class ReplayService
         Directory.CreateDirectory(handleDataFolderPath);
     }
 
-    private OnizReplayContext GetReplayContext(Sc2Replay replay)
-    {
-        var replayHandler = new OnizReplayHandler(replay);
-        var context = replayHandler.GetFullContext();
-
-        return context;
-    }
-
     private async Task<ICollection<OnizReplayContext>> DecodeUniqueReplayContexts(Func<int, TimeSpan, Task> progressCallback)
     {
-        var uniqueContexts = new Dictionary<string, OnizReplayContext>();
-        var replayJudge = new OnizReplayJudge(uniqueContexts);
+        var contexts = new ConcurrentBag<OnizReplayContext>();
         var files = Directory.GetFiles(_replayPathRetriever.TrueReplaysPath, Sc2Extension, SearchOption.AllDirectories);
+        var length = files.Length;
         var counter = 0;
-        var progressTask = Task.CompletedTask;
         var watch = Stopwatch.StartNew();
 
-        foreach (var file in files)
+        // Track the progress task with Interlocked for thread safety
+        var lastProgressTask = Task.CompletedTask;
+
+        await Parallel.ForEachAsync(files, new ParallelOptions { MaxDegreeOfParallelism = ConcurrentReplays }, async (file, cancellationToken) =>
         {
             try
             {
-                var replay = _replayDecoder.DecodeReplay(file);
-                counter++;
+                var replayDecoder = new ReplayDecoder();
+                var replay = replayDecoder.DecodeReplay(file);
+                var incrementedCounter = Interlocked.Increment(ref counter);
 
-                if (progressTask.IsCompleted)
+                var averageElapsed = watch.Elapsed / incrementedCounter;
+                var averageTimeLeftForAnalyze = averageElapsed * (length - incrementedCounter);
+
+                var newProgressTask = progressCallback(incrementedCounter, averageTimeLeftForAnalyze);
+                var oldTask = Interlocked.Exchange(ref lastProgressTask, newProgressTask);
+
+                var replayHandler = new OnizReplayHandler(replay);
+                var context = replayHandler.GetFullContext();
+
+                if (context.IsValidContext)
                 {
-                    var averageElapsed = watch.Elapsed / counter;
-                    var averageTimeLeftForAnalyze = averageElapsed * (files.Length - counter);
-
-                    progressTask = progressCallback(counter, averageTimeLeftForAnalyze);
+                    context.Hash = Hash(replay);
+                    contexts.Add(context);
                 }
-
-                replayJudge.Challenge(replay);
+            }
+            catch (Exception ex) when (ex is MPQException or Sc2TagException)
+            {
+                // Invalid MPQHeader, corrupted replay.
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
             }
-        }
+        });
 
-        await progressTask;
+        await lastProgressTask;
         await progressCallback(counter, TimeSpan.Zero);
 
-        return uniqueContexts.Values;
+        var uniqueContexts = contexts
+            .GroupBy(x => x.Hash, (x, y) => y.MaxBy(z => z.ElapsedGameLoops))
+            .ToArray();
+
+        return uniqueContexts!;
+    }
+
+    private static OnizHash Hash(Sc2Replay replay)
+    {
+        long randomValue = replay.InitData.GameDescription.RandomValue;
+        long startTimeUtc = replay.Details.Time;
+
+        return new OnizHash(randomValue, startTimeUtc);
     }
 }

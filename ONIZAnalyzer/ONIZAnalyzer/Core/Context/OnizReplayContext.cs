@@ -1,5 +1,6 @@
 ﻿using OhNoItsZombiesAnalyzer.Core.Enums;
 using ONIZAnalyzer.Core.Context;
+using ONIZAnalyzer.Core.Helpers.Replay;
 using System.Text.Json.Serialization;
 
 namespace OhNoItsZombiesAnalyzer.Core.Contexts;
@@ -36,4 +37,7 @@ public class OnizReplayContext
 
     [JsonIgnore]
     public int ElapsedGameLoops;
+
+    [JsonIgnore]
+    public OnizHash? Hash;
 }

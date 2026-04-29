@@ -87,6 +87,7 @@ public class ReplayPathsRetriever
 
         return folderDto;
     }
+
     private static bool IsOnizReplay(string replayPath)
     {
         var fileName = Path.GetFileName(replayPath);

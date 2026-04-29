@@ -1,12 +1,17 @@
 ﻿using OhNoItsZombiesAnalyzer.Core.Contexts;
 using Sc2ReplayAnalyzer.Decoder.APIModel;
-using System.Security.Cryptography;
-using System.Text;
-
 namespace ONIZAnalyzer.Core.Helpers.Replay;
 
-public class OnizReplayJudge(Dictionary<string, OnizReplayContext> replays)
+public class OnizReplayJudge(Dictionary<OnizHash, OnizReplayContext> replays)
 {
+    public void Challenge(Sc2Replay[] replays)
+    {
+        foreach(var replay in replays)
+        {
+            Challenge(replay);
+        }
+    } 
+
     public void Challenge(Sc2Replay replay)
     {
         var hash = Hash(replay);
@@ -25,13 +30,13 @@ public class OnizReplayJudge(Dictionary<string, OnizReplayContext> replays)
         }
     }
 
-    private string Hash(Sc2Replay replay)
+    private OnizHash Hash(Sc2Replay replay)
     {
         long randomValue = replay.InitData.GameDescription.RandomValue;
         long startTimeUtc = replay.Details.Time;
-        string input = $"{randomValue}:{startTimeUtc}";
-        byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
 
-        return Convert.ToHexString(hashBytes);
+        return new OnizHash(randomValue, startTimeUtc);
     }
 }
+
+public class OnizHash(long RandomValue, long Time);

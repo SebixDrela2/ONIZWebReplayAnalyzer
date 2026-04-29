@@ -14,9 +14,9 @@ public record SpanValuePlayer(long GameLoop, string Value, string PlayerName) : 
 public sealed class NameValue : IEquatable<NameValue>
 {
     public string Name { get; init; }
-    public int Value { get; set; }
+    public long Value { get; set; }
 
-    public NameValue(string name, int value)
+    public NameValue(string name, long value)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Value = value;
