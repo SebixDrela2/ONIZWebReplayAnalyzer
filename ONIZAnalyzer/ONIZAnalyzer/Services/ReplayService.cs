@@ -50,7 +50,7 @@ public class ReplayService
         }
     }
 
-    private async Task<ICollection<OnizReplayContext>> DecodeUniqueReplayContextsAsync(Func<int, TimeSpan, Task> progressCallback)
+    private async Task<OnizReplayContext[]> DecodeUniqueReplayContextsAsync(Func<int, TimeSpan, Task> progressCallback)
     {
         var contexts = new ConcurrentBag<OnizReplayContext>();
         var files = Directory.GetFiles(_replayPathRetriever.TrueReplaysPath, Sc2Extension, SearchOption.AllDirectories);
@@ -75,9 +75,13 @@ public class ReplayService
                     contexts.Add(context);
                 }
             }
-            catch (Exception ex) when (ex is MPQException or Sc2TagException)
+            catch (MPQException ex) 
             {
-                // Invalid MPQHeader, corrupted replay.
+                Console.Error.WriteLine($"MPQ EXCEPTION: {ex.Message} {ex.StackTrace}");
+            }
+            catch (Sc2TagException ex) 
+            {
+                Console.Error.WriteLine($"TAG EXCEPTION: {ex.Message} {ex.StackTrace}");
             }
             catch (Exception ex)
             {

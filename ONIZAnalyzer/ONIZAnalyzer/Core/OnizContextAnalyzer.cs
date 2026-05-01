@@ -1,6 +1,7 @@
 ﻿using OhNoItsZombiesAnalyzer.Core.Context;
 using OhNoItsZombiesAnalyzer.Core.Contexts;
 using OhNoItsZombiesAnalyzer.Core.Enums;
+using OhNoItsZombiesAnalyzer.Models;
 using ONIZAnalyzer.Core.Context;
 using ONIZAnalyzer.Core.Helpers.Replay;
 using Sc2ReplayAnalyzer.Decoder.APIModel;
@@ -64,6 +65,9 @@ public class OnizContextAnalyzer(Sc2Replay replay)
         var zombieName = _translator.GetPlayerName(zombieId);
         var bankKeyEvents = replay.GameEvents.OfEventType<SBankKeyEvent>();
         var (marineRankAvg, zombieRank) = GetOnizRaceRanks(bankKeyEvents, zombieId, playerCount);
+        IReadOnlyList<MarineContext> marineContext = [.. replay.Details.Players
+            .Where(x => x.Name != zombieName)
+            .Select(idx => new MarineContext{ Slot = (int)idx.Slot })];
 
         replayContext.TimeGameStarted = DateTime.FromFileTime(replay.Details.Time);
         replayContext.GameLength = OnizUtils.GetTimeFromGameLoop(replay.Header.ElapsedGameLoops);
@@ -77,12 +81,11 @@ public class OnizContextAnalyzer(Sc2Replay replay)
         replayContext.AverageMarineRank = marineRankAvg;
         replayContext.ZombieRank = zombieRank;
         replayContext.Advantage = GetOnizAdvantage(replay.TrackerEvents.SPlayerStatsEvents, zombieName);
-        replayContext.MarineContext = [.. replay.Details.Players
-            .Where(x => x.Name != zombieName)
-            .Select(idx => new MarineContext{ Slot = (int)idx.Slot })];
+        replayContext.MarineContext = marineContext; 
         replayContext.ZombieContext = new ZombieContext { Slot = zombieId };
         replayContext.PlayersBankContext = [.. replay.Details.Players
             .Select(x => new BankContext { Slot = (int)x.Slot, Handle = x.Toon.GetHandle(), Name = x.Name })];
+        replayContext.NameHandles = [.. replay.Details.Players.Select(player => new NameHandle(_translator.GetPlayerName((int)player.Slot)!, player.Toon.GetHandle()))];
         replayContext.IsValidContext = true;
         replayContext.ElapsedGameLoops = replay.Header.ElapsedGameLoops;
 
@@ -164,6 +167,8 @@ public class OnizContextAnalyzer(Sc2Replay replay)
 
             context.IsWinner = gameContext.MatchResult is OnizMatchResult.MarineWin;
         }
+
+        gameContext.MarineHandles = [.. gameContext.MarineContext.Select(x => x.Handle)];
     }
 
     private (double, int) GetOnizRaceRanks(IEnumerable<SBankKeyEvent> bankKeyEvents, int zombieId, int playerCount)

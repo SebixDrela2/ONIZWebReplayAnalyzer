@@ -5,9 +5,8 @@ namespace OhNoItsZombiesAnalyzer.Core.Contexts;
 public class MarineContext
 {
     public int Slot { get; set; }
-    public string? Handle { get; set; }
-
-    public string? Name { get; set; }
+    public string Handle { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public int Kills { get; set; }
     public int AlphaKills { get; set; }
 

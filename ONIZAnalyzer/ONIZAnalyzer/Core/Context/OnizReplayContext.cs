@@ -1,4 +1,5 @@
 ﻿using OhNoItsZombiesAnalyzer.Core.Enums;
+using OhNoItsZombiesAnalyzer.Models;
 using ONIZAnalyzer.Core.Context;
 using ONIZAnalyzer.Core.Helpers.Replay;
 using System.Text.Json.Serialization;
@@ -11,6 +12,8 @@ public class OnizReplayContext
     public IReadOnlyList<BankContext> PlayersBankContext { get; set; } = [];
     public ZombieContext ZombieContext { get; set; } = new ZombieContext();
 
+    public HashSet<string> MarineHandles = [];
+    public HashSet<NameHandle> NameHandles { get; set; } = [];
     public bool IsValidContext { get; set; } = false;
 
     public int OverMindIndex { get; set; }
@@ -26,12 +29,10 @@ public class OnizReplayContext
     public double AverageMarineRank { get; set; }
     public int ZombieRank { get; set; }
 
-    public IReadOnlyList<(string Name , string Handle)> HandleNames 
-        => [.. MarineContext.Select(context 
-            => (context.Name!, context.Handle!)), (ZombieContext.ZombieName, ZombieContext.Handle)!];
-
     public int MarineCount => PlayerCount - 1;
     public bool IsProfessionalGame => MarineGrandMasterCount > 4;
+
+    public IEnumerable<string> Handles => NameHandles.Select(x => x.Handle);
     public MarineContext GetPlayerContext(int slotId) => MarineContext.Single(context => context.Slot == slotId);
 
 

@@ -17,10 +17,10 @@ public class ReplaySerializer(string directoryPath)
         IncludeFields = true 
     };
 
-    public void SerializeContexts(IEnumerable<OnizReplayContext> allReplayContexts)
+    public void SerializeContexts(OnizReplayContext[] allReplayContexts)
     {
         var handleNames = allReplayContexts
-            .SelectMany(replayContext => replayContext.HandleNames)
+            .SelectMany(replayContext => replayContext.NameHandles)
             .DistinctBy(item => item.Handle);
 
         var dict = new Dictionary<string, OnizPlayerCareerData>();
@@ -37,24 +37,20 @@ public class ReplaySerializer(string directoryPath)
         File.WriteAllText(@$"{directoryPath}\{HandlesMap}.json", serializedHelperData);
     }
 
-    private OnizPlayerCareerData GetOnizPlayerCareerData(IEnumerable<OnizReplayContext> allReplayContexts, string handle)
+    private OnizPlayerCareerData GetOnizPlayerCareerData(OnizReplayContext[] allReplayContexts, string handle)
     {
         var allGamesContext = allReplayContexts
-                .Where(replayContext => replayContext.ZombieContext.Handle == handle)
-                .Concat(allReplayContexts
-                    .Where(replayContext => replayContext.MarineContext.Any(marineContext => marineContext.Handle == handle)))
-                .ToList();
+            .Where(replayContext => replayContext.Handles.Contains(handle))
+            .ToList();
 
-        var handleZombieContext = allReplayContexts
-                .Where(replayContext => replayContext.ZombieContext.Handle == handle)
-                .Select(replayContext => replayContext.ZombieContext)
-                .ToList();
+        var handleZombieContext = allGamesContext
+            .Where(replayContext => replayContext.ZombieContext.Handle == handle)
+            .Select(replayContext => replayContext.ZombieContext)
+            .ToList();
 
-        var handleMarineContext = allReplayContexts
-            .Where(replayContext => replayContext.MarineContext
-                .Any(marineContext => marineContext.Handle == handle))
+        var handleMarineContext = allGamesContext       
+            .Where(marineContext => marineContext.MarineContext.Any(context => context.Handle == handle))
             .SelectMany(replayContext => replayContext.MarineContext)
-            .Where(marineContext => marineContext.Handle == handle)
             .ToList();
 
         var playerCareerContext = new PlayerCareerContext(allGamesContext, handleMarineContext, handleZombieContext);
