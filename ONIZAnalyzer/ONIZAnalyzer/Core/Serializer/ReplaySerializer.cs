@@ -48,9 +48,9 @@ public class ReplaySerializer(string directoryPath)
             .Select(replayContext => replayContext.ZombieContext)
             .ToList();
 
-        var handleMarineContext = allGamesContext       
-            .Where(marineContext => marineContext.MarineContext.Any(context => context.Handle == handle))
-            .SelectMany(replayContext => replayContext.MarineContext)
+        var handleMarineContext = allGamesContext
+            .SelectMany(replayContext => replayContext.MarineContext
+                .Where(context => context.Handle == handle))
             .ToList();
 
         var playerCareerContext = new PlayerCareerContext(allGamesContext, handleMarineContext, handleZombieContext);

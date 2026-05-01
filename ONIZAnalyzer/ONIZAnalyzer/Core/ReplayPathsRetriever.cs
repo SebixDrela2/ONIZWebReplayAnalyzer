@@ -4,7 +4,7 @@ namespace OhNoItsZombiesAnalyzer.Core;
 
 public class ReplayPathsRetriever
 {
-    private const bool UseCustomPath = true;
+    private const bool UseCustomPath = false;
     private const string CustomReplayPath = @"C:\Users\Sebastian\replays";
 
     private const string StarcraftII = "Starcraft II";
