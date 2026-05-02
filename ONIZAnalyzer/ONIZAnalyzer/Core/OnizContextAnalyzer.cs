@@ -88,6 +88,7 @@ public class OnizContextAnalyzer(Sc2Replay replay)
         replayContext.NameHandles = [.. replay.Details.Players.Select(player => new NameHandle(_translator.GetPlayerName((int)player.Slot)!, player.Toon.GetHandle()))];
         replayContext.IsValidContext = true;
         replayContext.ElapsedGameLoops = replay.Header.ElapsedGameLoops;
+        replayContext.IsPublic = replay.Attributes.IsPublic;
 
         return replayContext;
     }

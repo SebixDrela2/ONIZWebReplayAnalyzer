@@ -28,9 +28,11 @@ public class OnizReplayContext
     public int MarineGrandMasterCount { get; set; }
     public double AverageMarineRank { get; set; }
     public int ZombieRank { get; set; }
+    public bool IsPublic { get; set; }
 
     public int MarineCount => PlayerCount - 1;
-    public bool IsProfessionalGame => MarineGrandMasterCount > 4;
+
+    public bool IsProfessionalGame => MarineGrandMasterCount > 2;
 
     public IEnumerable<string> Handles => NameHandles.Select(x => x.Handle);
     public MarineContext GetPlayerContext(int slotId) => MarineContext.Single(context => context.Slot == slotId);

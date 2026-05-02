@@ -38,7 +38,6 @@ public class OnizAllAverageTypeData
     public required double? Rank { get; init; }
     public required double? Kills { get; init; }
     public required double? SpecialKills { get; init; }
-    public required double? GasCollected { get; init; }
 }
 
 public record class OnizAdvantageMap(OnizAdvantage? OnizAdvantage, int? GamesPlayed, int? GamesWon);

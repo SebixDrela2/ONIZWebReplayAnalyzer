@@ -24,9 +24,11 @@ public class OnizAllDataContextHandler
     private OnizSkillAllData GetOnizSkillAllData(OnizReplayContext[] allReplays, bool isPrivate)
     {
         var replays = allReplays
-            .Where(replay => replay.IsProfessionalGame == isPrivate)
+            .Where(replay => isPrivate
+                ? (replay.IsProfessionalGame == isPrivate && !replay.IsPublic)
+                : !replay.IsProfessionalGame)
             .ToArray();
-
+            
         var gamesCount = replays.Length;
 
         var zombieAllType = gamesCount is 0 ? null : GetOnizAllTypeData(replays, true);
@@ -133,7 +135,7 @@ public class OnizAllDataContextHandler
 
         return new OnizAllAverageData
         {
-            Diverts = -1,// NOT IMPLEMENTED
+            Diverts = -1, // NOT IMPLEMENTED
             Zombie = zombieAverage,
             Marine = marineAverage
         };
@@ -159,7 +161,6 @@ public class OnizAllDataContextHandler
             Rank = averageRank,
             Kills = kills,
             SpecialKills = specialKills,
-            GasCollected = -1, // NOT IMPLEMENTED
         };
     }
 }
