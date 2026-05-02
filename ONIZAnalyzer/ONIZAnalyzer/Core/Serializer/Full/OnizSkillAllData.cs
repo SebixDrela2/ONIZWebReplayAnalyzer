@@ -28,7 +28,6 @@ public class OnizAllTypeData
 
 public class OnizAllAverageData
 {
-    public required double? Diverts { get; init; }
     public required OnizAllAverageTypeData? Zombie { get; init; }
     public required OnizAllAverageTypeData? Marine { get; init; }
 }

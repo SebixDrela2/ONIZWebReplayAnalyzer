@@ -129,13 +129,11 @@ public class OnizAllDataContextHandler
 
     private OnizAllAverageData GetOnizAverageData(OnizReplayContext[] replays)
     {
-        var diverts = 0;
         var zombieAverage = GetOnizAllAverageTypeData(replays, true);
         var marineAverage = GetOnizAllAverageTypeData(replays, false);
 
         return new OnizAllAverageData
         {
-            Diverts = -1, // NOT IMPLEMENTED
             Zombie = zombieAverage,
             Marine = marineAverage
         };
