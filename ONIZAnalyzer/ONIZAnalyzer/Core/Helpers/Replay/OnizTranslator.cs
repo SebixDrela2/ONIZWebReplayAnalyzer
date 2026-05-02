@@ -23,10 +23,13 @@ public class OnizTranslator
 
     private Dictionary<string, string> BankTranslations { get; }
 
-    public OnizTranslator(Details details)
+    public OnizTranslator(Details details) : this()
     {
         _details = details;
+    }
 
+    public OnizTranslator()
+    {
         MarineUpgradeTranslations = GetTranslations("Marine.Upgrades.txt");
         ZombieUpgradeTranslations = GetTranslations("Zombie.Upgrades.txt");
         ZombieStrainsTranslations = GetTranslations("Zombie.StrainUnits.txt");

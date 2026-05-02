@@ -9,8 +9,10 @@ public class ReplaySerializer(string directoryPath)
 {
     private const string HandlesData = nameof(HandlesData);
     private const string HandlesMap = nameof(HandlesMap);
+    private const string AllData = nameof(AllData);
 
     private readonly OnizPlayerCareerContextHandler _careerContextSerializer = new(directoryPath);
+    private readonly OnizAllDataContextHandler _contextHandler = new();
     private readonly JsonSerializerOptions _options = new() 
     {
         WriteIndented = true, 
@@ -29,12 +31,15 @@ public class ReplaySerializer(string directoryPath)
         {
             dict.Add(handle, GetOnizPlayerCareerData(allReplayContexts, handle));
         }
+        var allData = _contextHandler.GetOnizAllData(allReplayContexts);
 
         var serializedData = JsonSerializer.Serialize(dict, _options);
         var serializedHelperData = JsonSerializer.Serialize(handleNames, _options);
+        var serializedAllData = JsonSerializer.Serialize(allData, _options);
 
         File.WriteAllText(@$"{directoryPath}\{HandlesData}.json", serializedData);
         File.WriteAllText(@$"{directoryPath}\{HandlesMap}.json", serializedHelperData);
+        File.WriteAllText(@$"{directoryPath}\{AllData}.json", serializedAllData);
     }
 
     private OnizPlayerCareerData GetOnizPlayerCareerData(OnizReplayContext[] allReplayContexts, string handle)

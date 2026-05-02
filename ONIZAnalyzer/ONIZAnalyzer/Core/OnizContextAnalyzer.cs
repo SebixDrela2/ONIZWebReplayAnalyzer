@@ -139,6 +139,7 @@ public class OnizContextAnalyzer(Sc2Replay replay)
         AddPurchases(context.Upgrades, context.Slot, OnizTranslatorType.ZombieUpgrades);
         AddKillsSpecific(context.StrainKills, context.Slot, OnizTranslatorType.ZombieStrains);
         AddKillsSpecific(context.AlphaKills, context.Slot, OnizTranslatorType.ZombieAlphas);
+        AddBornSpecific(context.UnitBorns, OnizTranslatorType.ZombieAlphas);
     }
 
     private void AsignMarineContext(OnizReplayContext gameContext)
@@ -203,7 +204,7 @@ public class OnizContextAnalyzer(Sc2Replay replay)
             .OrderBy(e => e.ScoreValueVespeneCurrent)
             .FirstOrDefault()?.ScoreValueVespeneCurrent;
 
-        if (marineVespene is not null)
+        if (marineVespene is null)
         {
             return OnizAdvantage.NotFullGame;
         }
@@ -247,11 +248,11 @@ public class OnizContextAnalyzer(Sc2Replay replay)
 
     private void AddKillsSpecific(HashSet<NameValue> killsDict, int playerId, OnizTranslatorType translatorType)
     {
-        var translator = _translator.GetTranslator(translatorType);
+        var translates = _translator.GetTranslator(translatorType);
         var validDiedEvents = replay.TrackerEvents.SUnitDiedEvents
             .Where(unitDiedEvent => unitDiedEvent.KillerUnitBornEvent is { } killerEvent
                 && OnizUtils.IsCorrectSlot(killerEvent.ControlPlayerId, playerId)
-                && translator.ContainsKey(killerEvent.UnitTypeName));
+                && translates.ContainsKey(killerEvent.UnitTypeName));
 
         foreach (var unitDiedEvent in validDiedEvents)
         {
@@ -264,6 +265,29 @@ public class OnizContextAnalyzer(Sc2Replay replay)
             if (killEntry.Value is 1)
             {
                 killsDict.Add(killEntry);
+            }
+        }
+    }
+
+    private void AddBornSpecific(HashSet<NameValue> bornDict, OnizTranslatorType translatorType)
+    {
+        var translates = _translator.GetTranslator(translatorType);
+        var validBornEvents = replay.TrackerEvents.SUnitBornEvents
+            .Where(unitBornEvent => translates.ContainsKey(unitBornEvent.UnitTypeName));
+
+        var dict = new Dictionary<string, int>();
+
+        foreach(var unitBornEvent in validBornEvents)
+        {
+            var translatedBorn = translates[unitBornEvent.UnitTypeName];
+            var bornEntry = bornDict.FirstOrDefault(entry => entry.Name == translatedBorn)
+                            ?? new NameValue(translatedBorn, 0);
+
+            bornEntry.Value += 1;
+
+            if (bornEntry.Value is 1)
+            {
+                bornDict.Add(bornEntry);
             }
         }
     }

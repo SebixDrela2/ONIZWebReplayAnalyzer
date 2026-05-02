@@ -1,15 +1,19 @@
 ﻿namespace OhNoItsZombiesAnalyzer.Core.Enums;
 
+[Flags]
 public enum OnizAdvantage
-{
-    ExtremeMarineAdvantage = 0,
-    MajorMarineAdvantage = 1,
-    RegularMarineAdvantage = 2,
-    MinorMarineAdvantage = 3,
-    NoAdvantage = 4,
-    MinorZombieAdvantage = 5,
-    RegularZombieAdvantage = 6,
-    MajorZombieAdvantage = 7,
-    ExtremeZombieAdvantage = 8,
-    NotFullGame = 9,
+{   
+    NoAdvantage = 0,
+    ExtremeMarineAdvantage = 1 << 0,
+    MajorMarineAdvantage = 1 << 1,
+    RegularMarineAdvantage = 1 << 2,
+    MinorMarineAdvantage = 1 << 3,
+    MinorZombieAdvantage = 1 << 4,
+    RegularZombieAdvantage = 1 << 5,
+    MajorZombieAdvantage = 1 << 6,
+    ExtremeZombieAdvantage = 1 << 7,
+    NotFullGame = 1 << 8,
+
+    MarineAdvantage = ExtremeMarineAdvantage | MajorMarineAdvantage | RegularMarineAdvantage | MinorMarineAdvantage,
+    ZombieAdvantage = ExtremeZombieAdvantage | MajorZombieAdvantage | RegularZombieAdvantage | MinorZombieAdvantage,
 }

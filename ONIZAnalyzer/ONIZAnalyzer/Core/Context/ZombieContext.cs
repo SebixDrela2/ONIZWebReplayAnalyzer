@@ -13,6 +13,6 @@ public class ZombieContext
 
     public HashSet<NameValue> StrainKills { get; set; } = [];
     public HashSet<NameValue> AlphaKills { get; set; } = [];
-
+    public HashSet<NameValue> UnitBorns { get; set; } = [];
     public HashSet<SpanValuePlayer> Upgrades { get; set; } = [];
 }

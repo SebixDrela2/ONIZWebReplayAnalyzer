@@ -1,6 +1,5 @@
 ﻿using ONIZAnalyzer.Core.Context;
 using ONIZAnalyzer.Core.Serializer.CareerData;
-using System.Text.Json;
 
 namespace ONIZAnalyzer.Core.Serializer;
 
